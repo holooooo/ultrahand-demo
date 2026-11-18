@@ -39,7 +39,7 @@ for (const seg of segs) {
       if (!a.hold && b.hold) cue(ft, 'grab', { pan, gain: 0.5 });
       if (a.hold && !b.hold && !b.events.some(e => e.type === 'glue' && Math.abs(e.t - i / FPS) < 0.1)) cue(ft, 'drop', { pan, gain: 0.4 });
       const pa = a.parts.some(p => p.power), pb = b.parts.some(p => p.power);
-      if (!pa && pb) cue(ft, 'power_on', { pan, gain: 0.5 });
+      if (!pa && pb) { if (b.parts.some(p => p.type === 'rocket' && p.power)) cue(ft, 'roar', { pan, gain: 0.9, dur: Math.max(1.5, Math.min(10, seg.b - ft)) }); else cue(ft, 'power_on', { pan, gain: 0.5 }); }
     }
     void last;
   });
@@ -49,11 +49,11 @@ for (const seg of segs) {
 // 章节开头的小提示音、两处大字的重音
 for (const s of TL.scenes.slice(1)) cue(s.start + 0.05, 'ui_tick', { gain: 0.5 });
 const L = (id, i) => TL.scenes.find(s => s.id === id).lines[i];
-cue(L('hook', 1).start + 1.55, 'slam', { gain: 0.55 });
+cue(L('hook', 3).start, 'slam', { gain: 0.55 });
 cue(L('hook', 2).start + 0.15, 'whoosh', { gain: 0.6 });
-cue(L('gdc', 2).start, 'slam', { gain: 0.45 });
-cue(L('hook', 4).start, 'chime', { gain: 0.5 });
-cue(L('outro', 1).start + 0.6, 'chime', { gain: 0.5 });
+cue(L('gdc', 1).start, 'slam', { gain: 0.45 });
+cue(L('launch', 4).start, 'chime', { gain: 0.6 });
+cue(L('outro', 1).start + 2.0, 'chime', { gain: 0.5 });
 cues.sort((a, b) => TL.scenes.findIndex(s => s.id === a.scene) - TL.scenes.findIndex(s => s.id === b.scene) || a.offset - b.offset);
 writeFileSync('sfx_cues.json', JSON.stringify(cues, null, 1));
 const count = {}; cues.forEach(c => count[c.type] = (count[c.type] || 0) + 1);

@@ -3,32 +3,26 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:var(--w);height:var(--h);overflow:hidden;background:#000;font-family:"PingFang SC","Heiti SC",sans-serif}
-#c{position:relative;width:var(--w);height:var(--h);overflow:hidden}
-.half{position:absolute;top:0;bottom:0;background-repeat:no-repeat}
-.L{left:0;width:56%;background-image:url(totk_car.jpg);background-size:auto 118%;background-position:64% 75%;clip-path:polygon(0 0,100% 0,82% 100%,0 100%)}
-.R{right:0;width:56%;background-image:url(mine.jpg);background-size:auto 112%;background-position:30% 62%;clip-path:polygon(18% 0,100% 0,100% 100%,0 100%)}
-.seam{position:absolute;top:-5%;bottom:-5%;left:50%;width:calc(var(--u)*1.2);background:#7dffb0;box-shadow:0 0 calc(var(--u)*6) #3dff8f,0 0 calc(var(--u)*2) #fff;transform:translateX(-50%) rotate(5.8deg)}
-.tag{position:absolute;top:calc(var(--u)*11);padding:calc(var(--u)*1.6) calc(var(--u)*3.4);border-radius:calc(var(--u)*2);font-weight:900;font-size:calc(var(--u)*4.6);color:#fff;border:calc(var(--u)*.5) solid #fff;background:rgba(0,0,0,.55)}
-.tag.l{left:calc(var(--u)*5)}
-.tag.r{right:calc(var(--u)*5);background:#0a3a22;border-color:#7dffb0;color:#c9ffe0}
-.big{position:absolute;left:0;right:0;top:57%;transform:translateY(-34%);text-align:center;line-height:1.02}
-.big .a{font-size:calc(var(--u)*11);font-weight:900;color:#fff;-webkit-text-stroke:calc(var(--u)*1.1) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*1) calc(var(--u)*4) rgba(0,0,0,.7)}
-.big .b{font-size:calc(var(--u)*17);font-weight:900;color:#7dffb0;-webkit-text-stroke:calc(var(--u)*1.4) #062312;paint-order:stroke fill;text-shadow:0 0 calc(var(--u)*6) rgba(61,255,143,.8),0 calc(var(--u)*1) calc(var(--u)*3) #000}
-.sub{display:inline-block;margin-top:calc(var(--u)*2.4);padding:calc(var(--u)*1.2) calc(var(--u)*3.4);border-radius:999px;background:#ffcf33;color:#1a1200;font-size:calc(var(--u)*4.6);font-weight:900;border:calc(var(--u)*.5) solid #000}
-.badge{position:absolute;left:50%;transform:translateX(-50%);top:calc(var(--u)*2.6);display:flex;align-items:center;gap:calc(var(--u)*1.4);padding:calc(var(--u)*.8) calc(var(--u)*2.6) calc(var(--u)*.8) calc(var(--u)*.8);border-radius:999px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.3)}
-.badge img{width:calc(var(--u)*6.4);height:calc(var(--u)*6.4);border-radius:50%;border:calc(var(--u)*.4) solid #fff;background:#fff}
-.badge b{color:#fff;font-size:calc(var(--u)*3);font-weight:800}
+#c{position:relative;width:var(--w);height:var(--h);overflow:hidden;background:url(launch.jpg) center 50%/cover no-repeat}
+#c::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,22,48,.55) 0%,rgba(8,22,48,.25) 38%,rgba(0,0,0,0) 55%)}
+.big{position:absolute;left:0;right:0;top:calc(var(--u)*8.5);text-align:center;line-height:1.05}
+.big .a{font-size:calc(var(--u)*10);font-weight:900;color:#fff;-webkit-text-stroke:calc(var(--u)*1.3) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*.8) calc(var(--u)*2.5) rgba(0,0,0,.6)}
+.big .b{font-size:calc(var(--u)*15);font-weight:900;color:#ffd21f;-webkit-text-stroke:calc(var(--u)*1.8) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*1) calc(var(--u)*3) rgba(0,0,0,.7)}
+.tag{position:absolute;padding:calc(var(--u)*1) calc(var(--u)*2.4);border-radius:calc(var(--u)*1.6);background:#fff;color:#111;font-weight:900;font-size:calc(var(--u)*4);border:calc(var(--u)*.5) solid #000}
+.tag::after{content:"";position:absolute;left:50%;bottom:calc(var(--u)*-2.6);border:calc(var(--u)*1.3) solid transparent;border-top-color:#000;transform:translateX(-50%)}
+.badge{position:absolute;left:calc(var(--u)*2.4);top:calc(var(--u)*2.4);display:flex;align-items:center;gap:calc(var(--u)*1.2);padding:calc(var(--u)*.7) calc(var(--u)*2.2) calc(var(--u)*.7) calc(var(--u)*.7);border-radius:999px;background:rgba(0,0,0,.6)}
+.badge img{width:calc(var(--u)*5.4);height:calc(var(--u)*5.4);border-radius:50%;border:calc(var(--u)*.35) solid #fff;background:#fff}
+.badge b{color:#fff;font-size:calc(var(--u)*2.6);font-weight:800}
 </style></head><body>
 <div id="c">
-  <div class="half L"></div><div class="half R"></div><div class="seam"></div>
   <div class="badge"><img src="../brand/avatar.png"><b>粑粑柑（梭哈ai版）</b></div>
-  <div class="tag l">原版 · 王国之泪</div>
-  <div class="tag r">我的网页版 · 能玩</div>
-  <div class="big"><div class="a">我用代码复刻了</div><div class="b">究极手</div><div class="sub">真物理 · 没有一行车辆程序</div></div>
+  <div class="big"><div class="a">如何在塞尔达</div><div class="b">完成载人航天</div></div>
+  <div class="tag" id="pilot">乘客</div>
 </div>
 <script>
 const q=new URLSearchParams(location.search),w=+(q.get('w')||1920),h=+(q.get('h')||1080);
 const r=document.documentElement.style;r.setProperty('--w',w+'px');r.setProperty('--h',h+'px');r.setProperty('--u',(Math.min(w,h*1.5)/100)+'px');
-if(h>w){document.querySelector('.L').style.cssText='width:100%;height:52%;clip-path:polygon(0 0,100% 0,100% 88%,0 100%)';document.querySelector('.R').style.cssText='width:100%;top:48%;height:52%;clip-path:polygon(0 12%,100% 0,100% 100%,0 100%)';document.querySelector('.seam').style.cssText='left:-5%;right:-5%;top:50%;height:calc(var(--u)*1.2);width:auto;transform:translateY(-50%) rotate(-3.5deg)';document.querySelector('.tag.r').style.cssText+=';top:52%';document.querySelector('.big').style.cssText+=';top:30%';}
+const s=Math.max(w/1920,h/1080), ox=(w-1920*s)/2, oy=(h-1080*s)*0.5;
+const p=document.getElementById('pilot'); p.style.left=(ox+962*s)+'px'; p.style.top=(oy+640*s)+'px'; p.style.transform='translate(-50%,-115%)';
 window.READY=true;
 </script></body></html>

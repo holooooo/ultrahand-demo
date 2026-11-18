@@ -1,3 +1,1 @@
-{"bpm": 112, "key": "dlyd",
- "levels": {"hook": 3, "repo": 1, "gdc": 1, "grab": 2, "rotate": 1, "find": 1, "glue": 2, "carry": 2, "power": 3, "besiege": 3, "outro": 1},
- "hits": [["glue", 0.0], ["besiege", 0.0]]}
+{"bpm": 112, "key": "dlyd", "levels": {"hook": 3, "repo": 1, "gdc": 1, "grab": 2, "rotate": 1, "find": 1, "glue": 2, "carry": 2, "power": 2, "besiege": 3, "launch": 3, "outro": 1}, "hits": [["launch", 0.0], ["glue", 0.0]]}

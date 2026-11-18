@@ -1,5 +1,5 @@
 {
- "title": "我用代码复刻了王国之泪的究极手",
+ "title": "如何在塞尔达完成载人航天",
  "series": "机制拆解",
  "episode": 5,
  "rehookEvery": 15,
@@ -7,94 +7,167 @@
   {
    "id": "hook",
    "kicker": "机制拆解 · 第 5 期",
-   "title": "究极手",
+   "title": "载人航天",
    "lines": [
-    {"zh": "王国之泪里，你能把任何东西粘在一起：木板、轮子、风扇，粘出车、飞机，甚至机甲。", "en": "In Tears of the Kingdom you can glue anything together: planks, wheels, fans. Cars, planes, even mechs.", "rehook": "钩子"},
-    {"zh": "可做它的程序员在 GDC 上说，开发那几年，他每天听到的就两句：坏了！飞走了！", "en": "But at GDC its physics programmer said the reports he got every day were just two lines: it broke! it flew away!", "say": "可做它的程序员在 GDC 上说，开发那几年，他每天听到的就两句：坏了！飞走了！"},
-    {"zh": "所以我自己写了一个。网页里，抓起木板，转四十五度，对准，松手，粘上了。", "en": "So I wrote my own. In the browser: grab a plank, turn it 45 degrees, line it up, let go. Glued."},
-    {"zh": "装上轮子和风扇，它自己就跑起来了。全是真实物理，没有一行“车辆程序”。", "en": "Add wheels and a fan and it drives off by itself. All real physics, not one line of vehicle code.", "rehook": "成品"},
-    {"zh": "这期机制拆解，就把我做它的六步从头讲一遍：究极手，到底是怎么把东西粘住的？", "en": "This episode walks through the six steps I took to build it: how does Ultrahand actually stick things together?", "rehook": "问"}
+    {
+     "zh": "王国之泪的玩家，早就用究极手把林克送上天好几回了。",
+     "en": "Tears of the Kingdom players have launched Link into the sky with Ultrahand more times than anyone can count."
+    },
+    {
+     "zh": "那这玩意儿到底是怎么做出来的？",
+     "en": "So how does this thing actually work?"
+    },
+    {
+     "zh": "任天堂没给代码，我只能自己写一个。顺便定个小目标：在网页里，完成一次载人航天。",
+     "en": "Nintendo didn't share the code, so I wrote my own. Small goal while I'm at it: a crewed spaceflight, in a web page."
+    },
+    {
+     "zh": "剧透一下：第一次发射，炸了。",
+     "en": "Spoiler: the first launch blew up."
+    },
+    {
+     "zh": "代码是我让 Claude Opus 写的，我负责提需求，和按发射按钮。",
+     "en": "Claude Opus wrote the code. I wrote the requests, and pressed the launch button.",
+     "say": "代码是我让 克劳德欧帕斯 写的，我负责提需求，和按发射按钮。"
+    }
    ]
   },
   {
    "id": "repo",
    "kicker": "先说福利",
-   "title": "网页能玩 · 源码私信",
+   "title": "能玩 · 有源码",
    "lines": [
-    {"zh": "先说福利：网页版直接就能玩，链接放在简介里。", "en": "First, the freebie: the web version is playable right now; the link is in the description."},
-    {"zh": "完整源码我单独放了一个仓库。一键三连之后，在评论区留个言，我私信发给你。", "en": "The full source lives in its own repo. Like, coin and favorite, leave a comment, and I'll DM it to you.", "say": "完整源码我单独放了一个仓库。一键三连之后，在评论区留个言，我私信发给你。"}
+    {
+     "zh": "网页版直接能玩，链接在简介。源码单独放了个仓库，三连加评论，我私信发你。",
+     "en": "The web version is playable now, link in the description. Source is in its own repo: like, coin, favorite, comment, and I'll DM it to you."
+    }
    ]
   },
   {
    "id": "gdc",
-   "kicker": "00 · 任天堂的铁律",
-   "title": "一切必须是物理",
+   "kicker": "00 · 任天堂的规矩",
+   "title": "全都得是物理",
    "lines": [
-    {"zh": "任天堂没公开究极手的代码，但在 GDC 2024 上，讲了它的地基。", "en": "Nintendo never released Ultrahand's code, but at GDC 2024 they explained its foundation.", "rehook": "官方"},
-    {"zh": "物理分三层：最底下是 Havok 物理中间件，上面是任天堂自己的物理库，再往上才是王国之泪专用的部分。", "en": "Physics comes in three layers: Havok middleware at the bottom, Nintendo's in-house physics library above it, and Tears-specific code on top.", "say": "物理分三层：最底下是哈沃克物理中间件，上面是任天堂自己的物理库，再往上才是王国之泪专用的部分。"},
-    {"zh": "然后定了一条铁律：世界里所有东西，都必须由动力学刚体加约束构成，无一例外。", "en": "Then came one iron rule: everything in the world must be built from dynamic rigid bodies and constraints. No exceptions."},
-    {"zh": "旧做法是按动画硬推着走的运动学物体。在物理引擎眼里，它的质量是无穷大。", "en": "The old way is a kinematic object pushed along by animation. To the physics engine, its mass is infinite."},
-    {"zh": "早期神庙的闸门就是这样。玩家用究极手塞一块冰进去，闸门直接把冰压进地里，还在那疯狂抖。", "en": "Early shrine gates worked that way. Slide a block of ice under one and the gate crushes it into the floor, shaking like crazy.", "rehook": "翻车"},
-    {"zh": "改成物理驱动以后，闸门被冰块顶住，两边留出一条缝。这条缝，反而成了一种新解法。", "en": "Once the gate became physics-driven, the ice holds it up and leaves a gap, and that gap became a brand-new solution."},
-    {"zh": "这条铁律，就是我复刻的第一条规则：手里拿着的东西，也不能例外。", "en": "That iron rule is rule number one of my remake: even the thing in your hand gets no exception."}
+    {
+     "zh": "先看任天堂自己怎么说。GDC 2024 上，王国之泪的物理负责人讲了一条铁律：",
+     "en": "First, what Nintendo says. At GDC 2024, the game's physics lead laid down one iron rule:",
+     "say": "先看任天堂自己怎么说。G D C 二零二四 上，王国之泪的物理负责人讲了一条铁律："
+    },
+    {
+     "zh": "世界里所有东西，都必须是刚体加约束。没有例外。",
+     "en": "Everything in the world must be rigid bodies plus constraints. No exceptions."
+    },
+    {
+     "zh": "以前很多机关是按动画硬推的。在物理引擎眼里，它们重得没有上限。",
+     "en": "A lot of old contraptions were pushed by animation. To the physics engine, they're infinitely heavy."
+    },
+    {
+     "zh": "结果就是：你塞块冰到闸门底下，闸门直接把冰按进地里，还在那抽搐。",
+     "en": "So if you slide a block of ice under a gate, the gate shoves it into the floor and keeps twitching."
+    },
+    {
+     "zh": "改成真物理以后，冰把闸门顶住了，还顺便多出来一种解法。",
+     "en": "With real physics, the ice holds the gate up, and that even opened up a new solution."
+    },
+    {
+     "zh": "好，规矩懂了。开工。",
+     "en": "Okay, rules understood. Let's build."
+    }
    ]
   },
   {
    "id": "grab",
    "kicker": "01 · 抓",
-   "title": "别改坐标，给速度",
+   "title": "别瞬移",
    "lines": [
-    {"zh": "第一步，抓。从屏幕中心打一条射线，打中哪个零件，就记下打中的那个点。", "en": "Step one: grab. Cast a ray from the screen center and remember exactly where it hits the part."},
-    {"zh": "最容易写错的是下一步：每帧直接把它的坐标改到你面前。", "en": "The easy mistake comes next: setting its position in front of you every frame."},
-    {"zh": "这就是运动学的老路。东西直接穿墙，碰到别的零件也只会把人家挤飞。", "en": "That's the old kinematic road. It phases through walls and bulldozes anything in its way.", "rehook": "翻车"},
-    {"zh": "按铁律，我不改坐标，而是每一帧算出目标位置减当前位置，乘一个系数，当成速度交给物理引擎。", "en": "Following the rule, I don't set positions. Each frame I take target minus current, scale it, and hand it to the engine as a velocity."},
-    {"zh": "现在墙会挡住它，它也只能推开别的东西，而不是穿过去。", "en": "Now the wall stops it, and it can only push other things aside, never pass through them."},
-    {"zh": "转身的时候，它跟着你转。因为它记的不是世界里的朝向，而是相对你的朝向。", "en": "When you turn, it turns with you, because it stores its orientation relative to you, not to the world."}
+    {
+     "zh": "第一步，抓东西。从屏幕中间打一条射线，打中哪，就抓哪。",
+     "en": "Step one: grab. Fire a ray from the middle of the screen; whatever it hits, you hold."
+    },
+    {
+     "zh": "新手写法，是每帧直接把它挪到你面前。效果嘛，穿墙，还顺手把箱子全挤飞。",
+     "en": "The beginner way is to teleport it in front of you every frame. Result: it phases through walls and launches every crate."
+    },
+    {
+     "zh": "正确写法，是给它一个速度，让它自己飞过去。墙挡着就是挡着，这才叫物理。",
+     "en": "The right way is to give it a velocity and let it fly there. If a wall's in the way, it stops. That's physics."
+    }
    ]
   },
   {
    "id": "rotate",
    "kicker": "02 · 转",
-   "title": "四十五度一格",
+   "title": "四十五度",
    "lines": [
-    {"zh": "第二步，转。每按一下转四十五度，转完再吸附到最近的网格角度。", "en": "Step two: rotate. Each press turns it 45 degrees, then snaps it to the nearest grid angle."},
-    {"zh": "这样木板才摆得正、对得齐。游戏里具体怎么吸附，任天堂没讲，四十五度是我自己选的。", "en": "That's what keeps planks square and aligned. Nintendo never said how the game snaps; 45 degrees is my own choice."}
+    {
+     "zh": "第二步，转。一下四十五度，转完对齐。不然你这辈子都摆不正一块木板。",
+     "en": "Step two: rotate. Forty-five degrees a press, then snap. Otherwise you'll never get a plank straight."
+    }
    ]
   },
   {
    "id": "find",
    "kicker": "03 · 找点",
-   "title": "最近的两个点",
+   "title": "粘哪儿",
    "lines": [
-    {"zh": "第三步，找粘接点。举着的时候，每一帧都在问：我这坨零件，离别的零件最近的是哪两个点？", "en": "Step three: find the glue point. While you hold something, every frame asks: which two points are closest between my parts and everyone else's?"},
-    {"zh": "物理引擎正好有这个查询：给两个形状，返回最近的两点和距离。", "en": "The physics engine already has that query: give it two shapes, get back the two closest points and the distance."},
-    {"zh": "距离小于一个阈值，就画出这根预览线。换个角度，最近点就跟着跳。", "en": "If the distance is under a threshold, draw this preview line. Change the angle and the closest pair jumps with it.", "rehook": "看"},
-    {"zh": "据媒体报道，任天堂还申请过一项专利：粘的时候，在两个物体上同时显示吸附点。你只动一个，两边都告诉你会粘在哪。", "en": "Nintendo reportedly even filed a patent on this: show the snap points on both objects at once. You move one, and both tell you where they'll join."}
+    {
+     "zh": "第三步，找粘哪儿。举着东西的时候，每一帧都在算：离我最近的是谁，差多远。",
+     "en": "Step three: where to glue. While you're holding something, every frame asks: who's closest, and how far?"
+    },
+    {
+     "zh": "够近了，就拉出这根线，意思是：松手就粘这儿。",
+     "en": "Close enough, and this line appears. It means: let go and it sticks here."
+    }
    ]
   },
   {
    "id": "glue",
    "kicker": "04 · 粘",
-   "title": "关节，还是合体？",
+   "title": "关节还是焊死",
    "lines": [
-    {"zh": "第四步，粘。松手那一刻，先把整坨东西平移那一小段距离，让两点贴上，再把它们连起来。", "en": "Step four: glue. The moment you let go, slide the whole thing that last little gap until the two points touch, then connect them."},
-    {"zh": "怎么连，有两种做法。第一种叫关节：两块还是两个刚体，中间加一个固定关节，每帧把它们拉回原来的相对位置。", "en": "There are two ways to connect. One is a joint: they stay two rigid bodies, and a fixed joint pulls them back to their relative pose every frame."},
-    {"zh": "第二种叫合并：把两块的碰撞体挂到同一个刚体上，从此它们就是一个物体。", "en": "The other is merging: hang both colliders on one rigid body, and from then on they are a single object."},
-    {"zh": "用一座木板桥试试，砸一块巨石。关节版会弯、会晃；合并版铁板一块。", "en": "Let's test it on a plank bridge and drop a boulder. The joint version bends and sways; the merged one stays rigid as a slab.", "rehook": "对比"},
-    {"zh": "那游戏里是哪一种？任天堂没说，只说过一切都是刚体加约束。粘出来的车会晃、会被扯开，更像关节，但这只是我的推测。", "en": "So which one does the game use? Nintendo never said; only that everything is rigid bodies plus constraints. Builds that wobble and pull apart look like joints, but that's my guess."},
-    {"zh": "关节版还有个细节必须处理：粘在一起的零件之间要关掉碰撞，不然它们会互相顶着打架。", "en": "The joint version needs one more detail: turn off collisions between glued parts, or they fight each other forever."}
+    {
+     "zh": "第四步，粘。这里有个岔路口。",
+     "en": "Step four: glue. Here the road forks."
+    },
+    {
+     "zh": "要么两块还是两块，中间加个关节拉着；要么干脆焊成一整块。",
+     "en": "Either they stay two pieces with a joint holding them, or you weld them into one solid thing."
+    },
+    {
+     "zh": "拿座桥试试，砸块石头。关节版会弯会晃，焊死的那版纹丝不动。",
+     "en": "Let's test a bridge and drop a rock. The joint version bends and wobbles; the welded one doesn't budge."
+    },
+    {
+     "zh": "游戏里用的哪种？任天堂没说。我猜是关节，因为大家造的车都在晃。",
+     "en": "Which one does the game use? Nintendo never said. My guess is joints, because everyone's cars wobble."
+    }
    ]
   },
   {
    "id": "carry",
-   "kicker": "05 · 整坨搬",
-   "title": "一起动，别硬拽",
+   "kicker": "05 · 搬",
+   "title": "整坨一起走",
    "lines": [
-    {"zh": "第五步，粘完再抓，你抓的就是一整坨。", "en": "Step five: once things are glued, grabbing one grabs the whole assembly."},
-    {"zh": "如果只拽被抓的那一块，其他零件全靠关节被拖着走。东西一长，就软塌塌的，一甩就乱。", "en": "If you only drag the piece you grabbed, every other part gets dragged by joints. Make it long and it goes limp and flails.", "rehook": "翻车"},
-    {"zh": "所以要让每个零件都按同一个刚体变换去追目标。整坨一起动，关节几乎不用出力。", "en": "So every part chases the target with the same rigid transform. The whole thing moves as one and the joints barely have to work."},
-    {"zh": "还有上限。玩家实测，一次最多粘二十一个零件，原因任天堂没解释。", "en": "And there's a cap: players found you can glue at most 21 parts at once. Nintendo never explained why."},
-    {"zh": "但零件越多，物理引擎要同时解的约束就越多。我把求解器迭代次数调到一，同一根长杆就成了面条；调到八，它才站得直。", "en": "But more parts means more constraints to solve at once. Set solver iterations to one and the same long pole turns into a noodle; at eight it stands straight."}
+    {
+     "zh": "第五步，搬。抓住一块，整坨都得跟着走。",
+     "en": "Step five: carry. Grab one piece and the whole build has to come along."
+    },
+    {
+     "zh": "要是只拽一块，后面全靠关节拖着，长了就成了面条。",
+     "en": "Drag just one piece and the rest hangs off the joints. Make it long and you've got noodles."
+    },
+    {
+     "zh": "所以每一块都朝同一个目标一起动，就稳了。",
+     "en": "So every piece moves toward the same target together, and it holds."
+    },
+    {
+     "zh": "还有，玩家测出来一次最多粘二十一个零件。为什么是二十一？任天堂没解释。",
+     "en": "Also, players found you can glue at most 21 parts. Why 21? Nintendo never explained."
+    },
+    {
+     "zh": "我猜跟这个有关：零件越多，越难算。物理引擎只算一遍是面条，算八遍才站得直。",
+     "en": "My guess: more parts, harder math. Let the engine iterate once and it's a noodle; eight times and it stands up."
+    }
    ]
   },
   {
@@ -102,31 +175,77 @@
    "kicker": "06 · 动力",
    "title": "没有车辆程序",
    "lines": [
-    {"zh": "第六步，动力。风扇最简单：每一帧，在它所在的位置，沿它朝的方向，施加一个推力。", "en": "Step six: power. A fan is the easy one: every frame, push with a force at its position, along the way it faces."},
-    {"zh": "轮子不一样，它得能转。所以不能合并，也不能用固定关节，只能用转动关节，再加一个马达拧它。", "en": "Wheels are different: they have to spin. So no merging and no fixed joint, only a hinge joint with a motor twisting it."},
-    {"zh": "GDC 上讲过，游戏里一个轮子由三个刚体组成：车轮、马达和轴，还带悬挂。", "en": "At GDC they said a single wheel in the game is three rigid bodies: the wheel, a motor and a shaft, with suspension."},
-    {"zh": "这才是王国之泪最狠的地方：根本没有车辆程序。车，只是轮子、木板、风扇，各自按物理规则凑在一起。", "en": "That's the boldest part of Tears of the Kingdom: there is no vehicle code at all. A car is just wheels, planks and fans, each following physics.", "rehook": "官方"},
-    {"zh": "用开发者的话说：我们做的不是有趣的东西，而是让有趣的事情发生的系统。", "en": "In the developers' words: rather than make something fun, make a system where fun things happen."}
+    {
+     "zh": "第六步，上动力。风扇很简单，就是一直在它屁股后面推。",
+     "en": "Step six: power. A fan is simple: it just keeps pushing from behind."
+    },
+    {
+     "zh": "轮子得能转，所以只能用转轴连着，再加个马达去拧。",
+     "en": "A wheel has to spin, so it hangs on an axle joint with a motor turning it."
+    },
+    {
+     "zh": "任天堂说，游戏里压根没有车辆程序。车，就是轮子加木板，自己凑出来的。",
+     "en": "Nintendo says there's no vehicle code at all. A car is just wheels and planks that happen to add up."
+    }
    ]
   },
   {
    "id": "besiege",
-   "kicker": "07 · 对比围攻",
-   "title": "会散架的机器",
+   "kicker": "07 · 围攻",
+   "title": "会散架",
    "lines": [
-    {"zh": "说到拼机器，绕不开围攻。它是先造后跑：搭的时候方块只是摆着，按下开始，才连上关节，开始物理。", "en": "Talking about machine building, you can't skip Besiege. You build first and run later: blocks just sit there until you press start, then joints connect and physics begins.", "say": "说到拼机器，绕不开围攻。它是先造后跑：搭的时候方块只是摆着，按下开始，才连上关节，开始物理。"},
-    {"zh": "而且关节有受力上限，超了就断。机器散架，本身就是玩法。", "en": "And joints have a strength limit; exceed it and they snap. Machines falling apart is the gameplay.", "rehook": "翻车"},
-    {"zh": "我也做了一个围攻模式：每帧估算关节被拉开了多远，连续超载几帧，就断开。", "en": "I added a Besiege mode too: every frame, estimate how far each joint is being pulled apart, and if it stays overloaded for a few frames, it breaks."},
-    {"zh": "两种设计，目标不同。围攻要你造一个扛得住的结构；王国之泪要你在活的世界里随手乱粘，而世界不能崩。", "en": "Two designs, two goals. Besiege wants you to engineer a structure that holds; Tears wants you to glue freely in a living world that must never break."}
+    {
+     "zh": "顺便提一嘴围攻。它是先搭好再开跑，关节受力太大就断，散架本身就是玩法。",
+     "en": "Quick word on Besiege. You build first and run later; overload a joint and it snaps. Falling apart is the gameplay."
+    },
+    {
+     "zh": "我也加了个围攻模式。然后，终于到了今天的主线任务。",
+     "en": "I added a Besiege mode too. Which brings us, finally, to today's main mission."
+    }
+   ]
+  },
+  {
+   "id": "launch",
+   "kicker": "08 · 载人航天",
+   "title": "三，二，一",
+   "lines": [
+    {
+     "zh": "载人航天，第一次尝试。一块木板，四根火箭，一位乘客。围攻模式，点火。",
+     "en": "Crewed spaceflight, attempt one. One plank, four rockets, one passenger. Besiege mode. Ignition."
+    },
+    {
+     "zh": "很好，关节全断了。乘客没事，他自己说的。",
+     "en": "Great, every joint snapped. The passenger is fine. He says so himself."
+    },
+    {
+     "zh": "第二次，换成焊死的合并模式。三，二，一。",
+     "en": "Attempt two, switched to welded merge mode. Three, two, one."
+    },
+    {
+     "zh": "起飞了。再高一点，再高一点。",
+     "en": "Liftoff. Higher. Higher."
+    },
+    {
+     "zh": "海拉鲁上空，任务完成。",
+     "en": "Above Hyrule. Mission complete.",
+     "say": "海拉鲁上空，任务完成。"
+    }
    ]
   },
   {
    "id": "outro",
    "kicker": "机制拆解 · 第 5 期",
-   "title": "去粘点什么",
+   "title": "去发射吧",
    "lines": [
-    {"zh": "网页版链接在简介，打开就能玩。想要源码，三连加评论，我私信发你。", "en": "The web version is linked in the description. Want the source? Like, coin, favorite, comment, and I'll DM it to you."},
-    {"zh": "我是粑粑柑，机制拆解，每期拆一个游戏机制。我们下期见。", "en": "I'm Babagan. Mechanics Breakdown takes apart one game mechanic per episode. See you next time.", "say": "我是粑粑柑，机制拆解，每期拆一个游戏机制。我们下期见。"}
+    {
+     "zh": "网页版在简介，你也可以去把自己送上天。源码，三连加评论，私信领。",
+     "en": "The web version is in the description; go launch yourself. For the source: like, coin, favorite, comment, and I'll DM you."
+    },
+    {
+     "zh": "代码是 Opus 写的，锅是我背的。我是粑粑柑，下期见。",
+     "en": "Opus wrote the code; I take the blame. I'm Babagan. See you next time.",
+     "say": "代码是 欧帕斯 写的，锅是我背的。我是粑粑柑，下期见。"
+    }
    ]
   }
  ]

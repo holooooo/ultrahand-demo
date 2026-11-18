@@ -5,7 +5,7 @@ import { Ultrahand } from './src/ultrahand.js';
 import { View } from './src/view.js';
 import { captureState } from './src/state.js';
 import { PARTS, PART_LIMIT } from './src/parts.js';
-import { buildCar, buildFlyer, buildBridge, scatter } from './src/presets.js';
+import { buildCar, buildFlyer, buildBridge, buildRocketShip, scatter } from './src/presets.js';
 
 const $ = id => document.getElementById(id);
 const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
@@ -79,8 +79,8 @@ canvas.addEventListener('mousedown', e => {
 canvas.addEventListener('contextmenu', e => e.preventDefault());
 canvas.addEventListener('wheel', e => { if (uh.held) { uh.push(-Math.sign(e.deltaY) * 0.8); e.preventDefault(); } }, { passive: false });
 
-const SPAWN_KEYS = ['plank', 'board', 'log', 'crate', 'wheel', 'fan', 'rocket', 'balloon', 'boulder'];
-$('spawns').innerHTML = SPAWN_KEYS.map((t, i) => `<button data-t="${t}"><kbd>${i + 1}</kbd>${PARTS[t].label}</button>`).join('');
+const SPAWN_KEYS = ['plank', 'board', 'log', 'crate', 'wheel', 'fan', 'rocket', 'balloon', 'boulder', 'pilot'];
+$('spawns').innerHTML = SPAWN_KEYS.map((t, i) => `<button data-t="${t}"><kbd>${(i + 1) % 10}</kbd>${PARTS[t].label}</button>`).join('');
 document.querySelectorAll('#spawns button').forEach(b => b.onclick = () => spawnAhead(b.dataset.t));
 function spawnAhead(type) {
   const f = fwd(); f.y = 0; f.normalize();
@@ -96,7 +96,7 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyX' && uh.held) { const n = uh.unglue(); toast(n ? `拆下 ${n} 个粘合点` : '它本来就没粘'); }
   if (e.code === 'KeyV') power();
   if (e.code === 'Space' && player.pos.y <= 1.71) player.vy = 5.2;
-  const d = +e.key; if (d >= 1 && d <= 9) spawnAhead(SPAWN_KEYS[d - 1]);
+  if (/^[0-9]$/.test(e.key)) spawnAhead(SPAWN_KEYS[(+e.key + 9) % 10]);
 });
 addEventListener('keyup', e => keys.delete(e.code));
 
@@ -120,6 +120,7 @@ $('b-power').onclick = power;
 $('b-reset').onclick = () => { reset(); setMode(sim.mode); };
 const presetAhead = fn => { const f = fwd(); f.y = 0; f.normalize(); const o = player.pos.clone().addScaledVector(f, 7); o.y = 0; fn(o, Math.atan2(-f.x, -f.z)); };
 $('p-car').onclick = () => presetAhead((o, y) => buildCar(sim, o, y + Math.PI / 2));
+$('p-rocket').onclick = () => presetAhead(o => { buildRocketShip(sim, o, { thrustMul: 0.4, burn: 25 }); toast('看着它按 V 点火（试试先切到「围攻式」）'); });
 $('p-fly').onclick = () => presetAhead((o, y) => buildFlyer(sim, o, y + Math.PI / 2));
 $('p-bridge').onclick = () => presetAhead(o => { const b = buildBridge(sim, o, 6); view.setStatics(sim.statics); sim.spawn('boulder', [o.x, 7, o.z]); return b; });
 

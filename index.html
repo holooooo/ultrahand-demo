@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>究极手 · 机制拆解 第 5 期 · 亲手粘一台车</title>
+<title>如何在塞尔达完成载人航天 · 究极手复刻 · 机制拆解 第 5 期</title>
 <meta name="description" content="塞尔达王国之泪的究极手是怎么做出来的？用 Three.js + Rapier 物理引擎复刻：抓取、45° 旋转、找粘接点、固定关节、整体搬运、风扇轮子火箭，以及围攻式会断的关节。">
 <link rel="icon" href="brand/avatar.png">
 <link rel="stylesheet" href="site.css">
@@ -14,7 +14,7 @@
 <header class="top">
   <div class="brand">
     <img class="avatar" src="brand/avatar.png" alt="粑粑柑（梭哈ai版）">
-    <div class="who"><b>粑粑柑（梭哈ai版）</b><span>机制拆解 · 第 5 期 · 究极手</span></div>
+    <div class="who"><b>粑粑柑（梭哈ai版）</b><span>机制拆解 · 第 5 期 · 究极手 · 代码由 Claude Opus 编写</span></div>
   </div>
   <nav class="tabs" role="tablist">
     <button role="tab" data-tab="preview" class="on">亲手试试</button>
@@ -40,7 +40,7 @@
         <h2>点击画面开始</h2>
         <p><kbd>WASD</kbd> 走 · 鼠标 看 · <kbd>左键</kbd> 抓起 / 松手（靠近别的零件会自动粘上）</p>
         <p><kbd>滚轮</kbd> 推远拉近 · <kbd>Q</kbd><kbd>E</kbd> 左右转 45° · <kbd>R</kbd><kbd>F</kbd> 前后翻 45°</p>
-        <p><kbd>X</kbd> 摇一摇拆下 · <kbd>右键</kbd> 松手不粘 · <kbd>V</kbd> 开 / 关动力 · <kbd>1</kbd>–<kbd>9</kbd> 召唤零件 · <kbd>Esc</kbd> 放开鼠标</p>
+        <p><kbd>X</kbd> 摇一摇拆下 · <kbd>右键</kbd> 松手不粘 · <kbd>V</kbd> 开 / 关动力 · <kbd>1</kbd>–<kbd>0</kbd> 召唤零件 · <kbd>Esc</kbd> 放开鼠标</p>
       </div>
     </div>
   </div>
@@ -70,7 +70,8 @@
     </div>
     <div class="sec">
       <h4>一键搭好</h4>
-      <div class="mini"><button id="p-car">小车</button><button id="p-fly">气球飞板</button><button id="p-bridge">木板桥 + 巨石</button></div>
+      <div class="mini"><button id="p-rocket" class="main">🚀 载人火箭</button><button id="p-car">小车</button></div>
+      <div class="mini"><button id="p-fly">热气球飞板</button><button id="p-bridge">木板桥 + 巨石</button></div>
       <div class="mini"><button id="b-power">开 / 关动力 <kbd>V</kbd></button><button id="b-reset" class="warn">重置场地</button></div>
     </div>
     <div class="note small">这是原创教学原型，不含任何商业游戏的代码或美术，数值为演示设计。游戏里的真实做法见「实现方法」页，按来源可信度标注。</div>
@@ -83,7 +84,7 @@
 
 <section id="tab-video" class="tab">
   <div class="vwrap">
-    <div class="vposter"><img src="media/poster.jpg" alt="解析视频画面" style="width:100%;border-radius:16px;display:block" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="noposter">封面制作中</div><span>机制拆解 · 第 5 期 · 究极手</span></div>
+    <div class="vposter"><img src="media/poster.jpg" alt="解析视频画面" style="width:100%;border-radius:16px;display:block" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="noposter">封面制作中</div><span>机制拆解 · 第 5 期 · 究极手 · 代码由 Claude Opus 编写</span></div>
     <p class="note">完整解析视频「机制拆解 05 · 究极手」发布在 B站 / 抖音，搜索作者 <b>粑粑柑（梭哈ai版）</b> 即可观看。视频里的演示画面，就是本页同一套物理和渲染逐帧渲染出来的。</p>
     <div class="vlinks">
       <a href="https://mechanics-breakdown.pages.dev/04-damage-numbers/" target="_blank" rel="noopener">第 4 期 · 跳字老虎机<small>伤害数字为什么让人上瘾</small></a>

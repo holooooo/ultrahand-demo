@@ -7,6 +7,7 @@ export const PARTS = {
   log:     { label: '圆木',   shape: ['cyl', 1.3, 0.24],       density: 600,  friction: 0.8 },
   crate:   { label: '木箱',   shape: ['box', 0.42, 0.42, 0.42], density: 220, friction: 0.7 },
   ice:     { label: '冰块',   shape: ['box', 0.45, 0.45, 0.45], density: 900, friction: 0.15 },
+  pilot:   { label: '乘客',   shape: ['ball', 0.32],           density: 300,  friction: 0.9 },
   boulder: { label: '巨石',   shape: ['ball', 0.6],            density: 2400, friction: 0.9 },
   wheel:   { label: '轮子',   shape: ['cyl', 0.13, 0.46],      density: 300,  friction: 1.4, device: 'wheel', power: { speed: 9, torque: 900 } },
   fan:     { label: '风扇',   shape: ['box', 0.36, 0.36, 0.22], density: 150,  friction: 0.6, device: 'fan', power: { thrust: 520 } },

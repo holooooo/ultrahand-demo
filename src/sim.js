@@ -251,7 +251,7 @@ export class Sim {
   togglePower(part, on) {
     const ps = this.compParts(part).filter(p => p.def.device);
     const want = on ?? !ps.some(p => p.power);
-    for (const p of ps) { p.power = want; if (want && p.type === 'rocket') p.burn = p.def.power.burn; }
+    for (const p of ps) { p.power = want; if (want && p.type === 'rocket') p.burn = p.burnOverride ?? p.def.power.burn; }
     return ps.length;
   }
   _devices(dt) {
@@ -272,7 +272,7 @@ export class Sim {
       } else if (p.type === 'rocket') {
         if (p.burn <= 0) { p.power = false; continue; }
         p.burn -= dt;
-        const f = V(0, 1, 0).applyQuaternion(ps.q).multiplyScalar(pw.thrust);
+        const f = V(0, 1, 0).applyQuaternion(ps.q).multiplyScalar(pw.thrust * (p.thrustMul ?? 1));
         p.body.addForceAtPoint(plain(f), plain(ps.p), true);
       } else if (p.type === 'wheel') {
         const e = this.edges.find(e => e.kind === 'hinge' && e.a === p.id);

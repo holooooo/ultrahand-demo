@@ -26,3 +26,4 @@ input[type=range]{accent-color:var(--uh)}
 .spawns button{padding:6px 4px;font-size:12px}
 .spawns kbd{margin-right:4px}
 .mini kbd{font-size:10px}
+.mini button.main{background:linear-gradient(180deg,#ffd21f,#ff9f1c);color:#2a1600;border-color:transparent;font-weight:800}

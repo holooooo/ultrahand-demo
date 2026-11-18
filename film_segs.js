@@ -15,56 +15,58 @@ export function buildSegs(TL, MAN) {
   const F = (slug, a, b, from = 0, zoom = [1, 1.06, 50, 50]) => MAN[slug] ? segs.push({ kind: 'foot', slug, a, b, from, zoom }) : D('flyer', a, b, 2);
   const X = (sa, sb, a, b, la, lb, fa = 0, fb = 0) => segs.push({ kind: 'xsplit', sa, sb, a, b, la, lb, fa, fb });
 
+  const E = (id, i) => SC[id].lines[i].end;
+  const M = (id, i) => (A(id, i) + E(id, i)) / 2;
   // hook
-  F('totk_builds_floatcannon', 0, 3.4, 8.0, [1.08, 1.0, 50, 45]);
-  F('totk_builds_walker', 3.4, A('hook', 1) - 0.05, 5.2, [1.0, 1.08, 50, 50]);
-  F('gdc_everything_physics', A('hook', 1) - 0.05, A('hook', 2) - 0.05, 0.0, GZ);
-  D('hero', A('hook', 2) - 0.05, A('hook', 3) - 0.05, 0.3, 5.6);
-  D('hero', A('hook', 3) - 0.05, A('hook', 4) - 0.05, 5.8, 15.5);
-  D('flyer', A('hook', 4) - 0.05, END('hook'), 3.0);
+  F('totk_builds_floatcannon', 0, 3.2, 8.0, [1.08, 1.0, 50, 45]);
+  F('totk_builds_walker', 3.2, A('hook', 1) - 0.05, 5.2, [1.0, 1.08, 50, 50]);
+  F('totk_trailer_pv2', A('hook', 1) - 0.05, A('hook', 2) - 0.05, 2.6, [1.0, 1.08, 50, 50]);
+  D('hero', A('hook', 2) - 0.05, M('hook', 2), 0.3, 5.6);
+  D('launch_ok', M('hook', 2), A('hook', 3) - 0.05, 3.0, 9.0);
+  D('launch_fail', A('hook', 3) - 0.05, A('hook', 4) - 0.05, 1.3, 4.5);
+  D('hero', A('hook', 4) - 0.05, END('hook'), 9.6, 16);
   // repo
-  D('hero', S('repo'), END('repo'), 15.5);
+  D('hero', S('repo'), END('repo'), 16);
   // gdc
-  F('gdc_everything_physics', S('gdc'), A('gdc', 3) - 0.05, 1.0, GZ);
-  F('gdc_gate_constraint', A('gdc', 3) - 0.05, A('gdc', 4) - 0.05, 0.0, GZ);
-  D('gate_kin', A('gdc', 4) - 0.05, A('gdc', 5) - 0.05, 0.3, 8.6);
-  D('gate_phys', A('gdc', 5) - 0.05, A('gdc', 6) - 0.05, 2.6, 9);
-  D('grab_vel', A('gdc', 6) - 0.05, END('gdc'), 0.0, 3.0);
+  F('gdc_everything_physics', S('gdc'), A('gdc', 2) - 0.05, 1.0, GZ);
+  F('gdc_gate_constraint', A('gdc', 2) - 0.05, A('gdc', 3) - 0.05, 0.0, GZ);
+  D('gate_kin', A('gdc', 3) - 0.05, A('gdc', 4) - 0.05, 2.6, 8.6);
+  D('gate_phys', A('gdc', 4) - 0.05, A('gdc', 5) - 0.05, 3.2, 9);
+  D('grab_vel', A('gdc', 5) - 0.05, END('gdc'), 0.0, 2.0);
   // grab
   D('grab_ray', S('grab'), A('grab', 1) - 0.05, 0.6, 6.5);
-  D('grab_tele', A('grab', 1) - 0.05, A('grab', 3) - 0.05, 0.0, 7.4);
-  D('grab_vel', A('grab', 3) - 0.05, A('grab', 5) - 0.05, 0.0, 7.4);
-  D('grab_turn', A('grab', 5) - 0.05, END('grab'), 0.0, 6);
-  // rotate
+  D('grab_tele', A('grab', 1) - 0.05, A('grab', 2) - 0.05, 0.0, 7.4);
+  D('grab_vel', A('grab', 2) - 0.05, END('grab'), 0.0, 7.4);
+  // rotate / find
   D('rotate', S('rotate'), END('rotate'), 0.0, 8.8);
-  // find
-  D('find', S('find'), A('find', 3) - 0.05, 0.0, 10.8);
-  F('totk_trailer_raft', A('find', 3) - 0.05, END('find'), 0.0, GZ);
+  D('find', S('find'), END('find'), 0.0, 10.8);
   // glue
-  D('glue', S('glue'), A('glue', 1) - 0.05, 0.0, 5.8);
-  D('glue', A('glue', 1) - 0.05, A('glue', 3) - 0.05, 5.8);
-  P('bridge_joint', 'bridge_merge', A('glue', 3) - 0.05, A('glue', 4) - 0.05, 0.6, [0, 0, 0], ['关节 · 会弯会晃', '合并 · 铁板一块'], { pull: 1.25 });
-  F('totk_builds_walker', A('glue', 4) - 0.05, A('glue', 5) - 0.05, 0.0, [1.0, 1.06, 50, 50]);
-  D('glue', A('glue', 5) - 0.05, END('glue'), 5.8);
+  D('glue', S('glue'), A('glue', 1) - 0.05, 0.0, 5.0);
+  D('glue', A('glue', 1) - 0.05, A('glue', 2) - 0.05, 5.0);
+  P('bridge_joint', 'bridge_merge', A('glue', 2) - 0.05, A('glue', 3) - 0.05, 0.6, [0, 0, 0], ['关节 · 会晃', '焊死 · 不动'], { pull: 1.25 });
+  F('totk_builds_walker', A('glue', 3) - 0.05, END('glue'), 0.0, [1.0, 1.06, 50, 50]);
   // carry
   D('carry_all', S('carry'), A('carry', 1) - 0.05, 0.0, 2.2);
   D('carry_drag', A('carry', 1) - 0.05, A('carry', 2) - 0.05, 0.4, 8);
   D('carry_all', A('carry', 2) - 0.05, A('carry', 3) - 0.05, 0.4, 8);
   D('limit', A('carry', 3) - 0.05, A('carry', 4) - 0.05, 0.3, 7.6);
-  P('iter1', 'iter8', A('carry', 4) - 0.05, END('carry'), 0.0, [0, 0, 0], ['求解器迭代 1 次', '求解器迭代 8 次'], { pull: 1.0 });
+  P('iter1', 'iter8', A('carry', 4) - 0.05, END('carry'), 0.0, [0, 0, 0], ['算 1 遍', '算 8 遍'], { pull: 1.0 });
   // power
   D('fan', S('power'), A('power', 1) - 0.05, 0.6);
   D('wheel', A('power', 1) - 0.05, A('power', 2) - 0.05, 0.6);
-  F('gdc_vehicle', A('power', 2) - 0.05, A('power', 3) - 0.05, 0.0, GZ);
-  D('hero', A('power', 3) - 0.05, A('power', 4) - 0.05, 10.2, 18);
-  F('totk_trailer_pv2', A('power', 4) - 0.05, END('power'), 4.0, [1.0, 1.06, 50, 50]);
+  F('gdc_vehicle', A('power', 2) - 0.05, A('power', 2) + 2.6, 0.0, GZ);
+  D('hero', A('power', 2) + 2.6, END('power'), 10.2);
   // besiege
-  F('besiege_build', S('besiege'), A('besiege', 1) - 0.05, 0.0, [1.0, 1.05, 50, 50]);
-  F('besiege_crash', A('besiege', 1) - 0.05, A('besiege', 2) - 0.05, 1.2, GZ);
-  D('bridge_besiege', A('besiege', 2) - 0.05, A('besiege', 3) - 0.05, 0.6);
-  X('totk_trailer_fans', 'besiege_siege', A('besiege', 3) - 0.05, END('besiege'), '王国之泪 · 边玩边粘', '围攻 · 先造后跑', 0, 0);
+  F('besiege_build', S('besiege'), M('besiege', 0), 0.0, [1.0, 1.05, 50, 50]);
+  F('besiege_crash', M('besiege', 0), A('besiege', 1) - 0.05, 1.2, [1.22, 1.24, 50, 0]);
+  D('bridge_besiege', A('besiege', 1) - 0.05, END('besiege'), 0.6);
+  // launch：点火正好落在“点火”“一”这两个字上
+  const ign = (shotIgn, lineEnd, lead) => shotIgn - (lineEnd - lead);
+  D('launch_fail', A('launch', 0) - 0.05, A('launch', 1) - 0.05, ign(1.6, E('launch', 0) - A('launch', 0), 0.25));
+  D('launch_fail', A('launch', 1) - 0.05, A('launch', 2) - 0.05, 1.6 + (E('launch', 0) - A('launch', 0)) * 0 + 0.25 + (A('launch', 1) - E('launch', 0)), 9);
+  D('launch_ok', A('launch', 2) - 0.05, A('launch', 3) - 0.05, ign(3.0, E('launch', 2) - A('launch', 2), 0.1));
+  { const f0 = 3.0 + 0.1 + (A('launch', 3) - E('launch', 2)); D('launch_ok', A('launch', 3) - 0.05, END('launch'), f0, Math.min(22, f0 + 1.8 * (END('launch') - A('launch', 3)))); }
   // outro
-  D('flyer', S('outro'), END('outro') + 0.1, 1.0);
-
+  { const f0 = 3.0 + 0.1 + (A('launch', 3) - E('launch', 2)); const f1 = Math.min(22, f0 + 1.8 * (END('launch') - A('launch', 3))); D('launch_ok', S('outro'), END('outro') + 0.1, f1); }
   return segs;
 }

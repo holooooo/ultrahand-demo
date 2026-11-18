@@ -65,3 +65,15 @@ export function scatter(sim, o = V()) {
     return sim.spawn(t, [o.x + x, o.y + y + 0.3, o.z + z], q);
   });
 }
+
+// 载人火箭：一块大木板 + 四角四根火箭 + 一位乘客
+export function buildRocketShip(sim, o = V(), { thrustMul = 1, burn = null } = {}) {
+  const board = sim.spawn('board', [o.x, o.y + 0.5, o.z]);
+  const rockets = [[-1.57, 0.6], [1.57, 0.6], [-1.57, -0.6], [1.57, -0.6]].map(([x, z]) => {
+    const r = sim.spawn('rocket', [o.x + x, o.y + 0.5, o.z + z]); r.thrustMul = thrustMul; if (burn) r.burnOverride = burn; return r;
+  });
+  const pilot = sim.spawn('pilot', [o.x, o.y + 0.57 + 0.32, o.z]);
+  rockets.forEach(r => glueTo(sim, r, board));
+  glueTo(sim, pilot, board);
+  return { board, rockets, pilot };
+}

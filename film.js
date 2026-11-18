@@ -34,111 +34,58 @@ const segAt = t => segs.find(s => t >= s.a && t < s.b) || segs[segs.length - 1];
 
 // ---------------------------------------------------------------- 可信度标签（按台词）
 const CRED = {
-  'hook:1': ['m', '媒体转述 · GDC 2024 讲座'],
-  'gdc:1': ['m', '媒体转述 · 法米通 GDC 2024 讲座报道'], 'gdc:2': ['h', '官方 · GDC 2024 讲座'], 'gdc:3': ['h', '官方 · GDC 2024 讲座'],
-  'gdc:4': ['h', '官方 · GDC 2024 讲座（下面是我的复刻）'], 'gdc:5': ['h', '官方 · GDC 2024 讲座（下面是我的复刻）'],
-  'rotate:1': ['t', '游戏内做法未公开 · 我的选择'],
-  'find:3': ['m', '媒体报道的专利 · 待核实'],
-  'glue:4': ['t', '我的推测 · 任天堂未公开'],
-  'carry:3': ['l', '玩家实测 · 非官方数字'],
-  'power:2': ['h', '官方 · GDC 2024 讲座'], 'power:3': ['h', '官方 · GDC 2024 讲座'], 'power:4': ['h', '官方 · 开发者原话'],
-  'besiege:0': ['l', '社区 Wiki · 待核实'], 'besiege:1': ['l', 'Unity 关节通用机制 / 社区 Mod'],
+  'gdc:0': ['m', '来源：GDC 2024 讲座报道'], 'gdc:1': ['h', '官方 · GDC 2024'], 'gdc:2': ['h', '官方 · GDC 2024'],
+  'gdc:3': ['h', '官方案例 · 画面是我的复刻'], 'gdc:4': ['h', '官方案例 · 画面是我的复刻'],
+  'rotate:0': ['t', '45° 是我定的'],
+  'glue:3': ['t', '我的推测'],
+  'carry:3': ['l', '玩家实测'], 'carry:4': ['t', '我的推测'],
+  'power:2': ['h', '官方 · GDC 2024'],
+  'besiege:0': ['l', '社区 Wiki'],
 };
+// 不放代码卡片和大段文字：画面只留短标签
+const codeFor = () => null;
 
-// ---------------------------------------------------------------- 代码卡片
-const CODE = {
-  tele: ['// ✗ 运动学：直接改坐标', 'body.setTranslation(target);', '// 穿墙、把别人挤飞'],
-  vel: ['// ✓ 物理驱动：给速度', 'v = (target - pos) * 12;', 'v = clampLength(v, 14);', 'body.setLinvel(v);'],
-  find: ['// 每帧：我这坨 vs 每个别的零件', 'c = a.contactCollider(b, 0.9);', 'if (c && c.distance < best)', '  best = { a, b, c.point1, c.point2 };'],
-  joint: ['// 关节：两个刚体 + 一个固定关节', 'JointData.fixed(anchorA, frameA,', '               anchorB, frameB);'],
-  merge: ['// 合并：一个刚体挂多个碰撞体', 'body = createRigidBody(dynamic);', 'for (p of parts) createCollider(p, body);'],
-  nocol: ['// 同一坨零件之间不算碰撞', 'filterContactPair(c1, c2) {', '  if (comp(c1) === comp(c2)) return NONE;', '}'],
-  fan: ['// 风扇：在它的位置、沿它的朝向推', 'f = forward(fan) * thrust;', 'body.addForceAtPoint(f, fan.pos);'],
-  wheel: ['// 轮子：转动关节 + 马达', 'hinge(wheel, board, axle);', 'torque = (speed - ω) * k;', 'wheel.addTorque(+torque);', 'board.addTorque(-torque);'],
-  besiege: ['// 围攻模式：关节超载就断', 'stress = drift(joint) * mass * k;', 'if (stress > limit) over++;', 'if (over >= 4) breakJoint();'],
-};
-const codeHTML = lines => lines.map(l => `<span class="ln">${l.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/(\/\/.*)$/, '<span class="cm">$1</span>').replace(/\b(\d+(\.\d+)?)\b/g, '<span class="num">$1</span>').replace(/\b(if|for|return|of)\b/g, '<span class="kw">$1</span>')}</span>`).join('');
-function codeFor(id, t) {
-  const at = (i) => t >= A(id, i) - 0.05 && t < E(id, i) + 0.2;
-  if (id === 'grab' && t >= A('grab', 1) && t < A('grab', 3) - 0.05) return ['src/ultrahand.js', CODE.tele];
-  if (id === 'grab' && t >= A('grab', 3) - 0.05 && t < A('grab', 5) - 0.05) return ['src/ultrahand.js', CODE.vel];
-  if (id === 'find' && (at(1) || at(2))) return ['src/sim.js · closestGlue', CODE.find];
-  if (id === 'glue' && at(1)) return ['src/sim.js · 关节', CODE.joint];
-  if (id === 'glue' && at(2)) return ['src/sim.js · 合并', CODE.merge];
-  if (id === 'glue' && at(5)) return ['src/sim.js · hooks', CODE.nocol];
-  if (id === 'power' && at(0)) return ['src/sim.js · 风扇', CODE.fan];
-  if (id === 'power' && at(1)) return ['src/sim.js · 轮子', CODE.wheel];
-  if (id === 'besiege' && at(2)) return ['src/sim.js · 围攻模式', CODE.besiege];
-  return null;
-}
-
-// ---------------------------------------------------------------- 卡片 / 大字
+// ---------------------------------------------------------------- 卡片 / 大字（都很短）
 function cardsFor(id, t) {
   const c = [];
-  const at = (html, x, y, o = 1, extra = '') => o > 0.01 && c.push(`<div class="card" style="left:${x}px;top:${y}px;opacity:${o.toFixed(3)};${extra}">${html}</div>`);
   const raw = (html, o = 1) => o > 0.01 && c.push(`<div style="position:absolute;inset:0;opacity:${o.toFixed(3)}">${html}</div>`);
   if (id === 'hook') {
-    const o = win(t, A('hook', 2) + 0.2, A('hook', 2) + 4.6, 0.35);
-    raw(`<div class="titlecard"><div class="k">机制拆解 · 第 5 期</div><div class="t">我用代码复刻了<em>究极手</em></div></div>`, o);
-    const o2 = win(t, A('hook', 4) + 1.2, END('hook') + 0.1, 0.4);
-    const names = ['抓', '转', '找点', '粘', '整坨搬', '动力'];
-    raw(`<div style="position:absolute;left:0;right:0;top:700px" class="steps6">${names.map((n, i) => `<div style="opacity:${ramp(t, A('hook', 4) + 1.4 + i * 0.25, 0.2).toFixed(2)}"><b>0${i + 1}</b>${n}</div>`).join('')}</div>`, o2);
+    raw(`<div class="titlecard"><div class="k">机制拆解 · 第 5 期</div><div class="t">如何在塞尔达<br>完成<em>载人航天</em></div></div>`, win(t, A('hook', 2) + 0.3, A('hook', 3) - 0.1, 0.35));
+  }
+  if (id === 'hook' || id === 'outro') {
+    const li = id === 'hook' ? 4 : 1;
+    raw(`<div class="opus"><b>代码</b>Claude Opus<b>提需求 · 按发射</b>粑粑柑</div>`, win(t, A(id, li), E(id, li) + 0.3, 0.3));
   }
   if (id === 'repo') {
-    const o = win(t, S('repo') + 0.1, END('repo') + 0.2, 0.4);
-    const k = t > A('repo', 1) + 0.6;
     raw(`<div class="free" style="position:absolute;left:150px;top:200px">
       <div class="site"><div class="bar">mechanics-breakdown.pages.dev/05-ultrahand/</div><img src="media/site.jpg"></div>
-      <div class="repo" style="opacity:${(0.35 + 0.65 * ramp(t, A('repo', 1), 0.4)).toFixed(2)}"><h4>完整源码 · 单独仓库</h4>
-        ${['点赞', '投币', '收藏'].map((s, i) => `<div class="row" style="opacity:${k || t > A('repo', 1) + 0.3 * i ? 1 : 0.3}"><i>${['👍', '🪙', '⭐'][i]}</i>${s}</div>`).join('')}
-        <div class="arrow">↓ 评论区留言</div><div class="dm">私信发你源码</div></div></div>`, o);
+      <div class="repo"><div class="row"><i>👍</i><i>🪙</i><i>⭐</i></div><div class="arrow">↓ 评论</div><div class="dm">私信发源码</div></div></div>`, win(t, S('repo') + 0.1, END('repo') + 0.2, 0.4));
   }
   if (id === 'gdc') {
-    const o1 = win(t, A('gdc', 1), E('gdc', 1) + 0.2, 0.4);
-    raw(`<div style="position:absolute;left:510px;top:250px" class="layers3">
-      <div class="l3" style="opacity:${ramp(t, A('gdc', 1) + 3.2, 0.3)}">王国之泪专用<small>轮子、链条、水的阻力…</small></div>
-      <div class="l2" style="opacity:${ramp(t, A('gdc', 1) + 1.8, 0.3)}">任天堂自研物理库<small>社内物理ライブラリ</small></div>
-      <div class="l1" style="opacity:${ramp(t, A('gdc', 1) + 0.3, 0.3)}">Havok<small>物理中间件</small></div></div>`, o1);
-    const o3 = win(t, A('gdc', 3), E('gdc', 3) + 0.2, 0.4);
-    at(`<h3>运动学物体（按动画硬推）</h3><div class="eqn">质量 = <em>∞</em></div><p style="margin-top:12px;text-align:center">它推谁，谁就得让开——哪怕被压进地里</p>`, 560, 330, o3, 'width:800px');
-  }
-  if (id === 'carry') {
-    if (t >= A('carry', 3) - 0.05 && t < A('carry', 4) - 0.05) {
-      const ex = frameExtra(t); const n = ex?.n ?? 1, bad = ex?.refused != null && segLocal(t) >= ex.refused - 0.05;
-      at(`<div class="counter ${bad ? 'bad' : ''}">${bad ? '22' : n}<span style="font-size:60px">/21</span><small>${bad ? '粘不上了' : '一坨里的零件数'}</small></div>`, 1460, 180, win(t, A('carry', 3), A('carry', 4) - 0.05, 0.3));
-    }
+    raw(`<div class="tiny" style="left:760px;top:300px"><div class="eqn">重量 = <em>∞</em></div></div>`, win(t, A('gdc', 2) + 0.4, E('gdc', 2) + 0.2, 0.3));
   }
   if (id === 'glue') {
-    const o1 = win(t, A('glue', 1) + 0.2, E('glue', 1) + 0.2, 0.35), o2 = win(t, A('glue', 2), E('glue', 2) + 0.2, 0.35);
-    at(`<h3>做法一 · 关节</h3><div class="dia"><div class="rb">刚体 A</div><div class="jt"></div><div class="rb">刚体 B</div></div><p>两个刚体，中间一个固定关节</p>`, 130, 560, o1, 'width:640px');
-    at(`<h3>做法二 · 合并</h3><div class="dia"><div class="one">一个刚体 · 两个碰撞体</div></div><p>从此就是一个物体</p>`, 130, 560, o2, 'width:640px');
+    raw(`<div class="tiny" style="left:120px;top:600px"><div class="dia"><div class="rb">A</div><div class="jt"></div><div class="rb">B</div></div><p>关节</p></div>
+         <div class="tiny" style="left:1240px;top:600px"><div class="dia"><div class="one">A + B</div></div><p>焊死</p></div>`, win(t, A('glue', 1) + 0.3, E('glue', 1) + 0.2, 0.3));
   }
-  if (id === 'besiege') {
-    const o = win(t, A('besiege', 3) + 0.4, END('besiege') + 0.2, 0.4);
-    raw(`<div class="versus" style="position:absolute;left:310px;top:600px"><div class="on"><h4>王国之泪</h4><p>边玩边粘 · 世界不能崩<br>一切都是刚体 + 约束</p></div><div><h4>围攻</h4><p>先造后跑 · 关节会断<br>设计一个扛得住的结构</p></div></div>`, o);
+  if (id === 'carry' && t >= A('carry', 3) - 0.05 && t < A('carry', 4) - 0.05) {
+    const ex = frameExtra(); const n = ex?.n ?? 1, bad = ex?.refused != null && segLocal() >= ex.refused - 0.05;
+    raw(`<div class="tiny" style="left:1460px;top:180px"><div class="counter ${bad ? 'bad' : ''}">${bad ? '22' : n}<span style="font-size:60px">/21</span></div></div>`, win(t, A('carry', 3), A('carry', 4) - 0.05, 0.3));
   }
   if (id === 'outro') {
-    const o = win(t, A('outro', 0), E('outro', 0) + 0.25, 0.4);
-    raw(`<div class="free" style="position:absolute;left:150px;top:220px">
-      <div class="site"><div class="bar">mechanics-breakdown.pages.dev/05-ultrahand/</div><img src="media/site.jpg"></div>
-      <div class="repo"><h4>源码 · 三连 + 评论</h4><div class="dm">私信发你</div></div></div>`, o);
-    const o2 = ramp(t, A('outro', 1) - 0.1, 0.5);
-    raw(`<div class="endcard"><img class="av" src="brand/avatar.png"><div class="id">粑粑柑（梭哈ai版）</div><div class="sub">机制拆解 · 每期拆一个游戏机制</div>
-      <div class="btns">${['点赞', '投币', '收藏'].map((s, i) => `<div class="btn ${t > A('outro', 1) + 0.6 + i * 0.35 ? 'on' : ''}"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="${i === 1 ? 9 : 8}"/></svg>${s}</div>`).join('')}</div>
-      <div class="follow">+ 关注</div></div>`, o2);
+    raw(`<div class="free" style="position:absolute;left:150px;top:220px"><div class="site"><div class="bar">mechanics-breakdown.pages.dev/05-ultrahand/</div><img src="media/site.jpg"></div></div>`, win(t, A('outro', 0), E('outro', 0) + 0.25, 0.4));
+    raw(`<div class="endcard"><img class="av" src="brand/avatar.png"><div class="id">粑粑柑（梭哈ai版）</div>
+      <div class="btns">${['点赞', '投币', '收藏'].map((x, i) => `<div class="btn ${t > A('outro', 1) + 0.6 + i * 0.35 ? 'on' : ''}"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="${i === 1 ? 9 : 8}"/></svg>${x}</div>`).join('')}</div>
+      <div class="follow">+ 关注</div></div>`, ramp(t, A('outro', 1) + 2.0, 0.5));
   }
   return c.join('');
 }
 function bigFor(id, t) {
-  const B = (l1, l2, o, top) => ({ html: `<div class="l1">${l1}</div>${l2 ? `<div class="l2">${l2}</div>` : ''}`, o, top });
-  if (id === 'hook') {
-    if (t >= A('hook', 1) + 1.6 && t < E('hook', 1) + 0.1) return B('“坏了！”“飞走了！”', '開発中の報告：壊れました！飛んでいきました！', win(t, A('hook', 1) + 1.6, E('hook', 1) + 0.1, 0.25), 360);
-    if (t >= A('hook', 4) && t < END('hook') + 0.1) return B('究极手，到底怎么<span class="acc">粘住</span>的？', '', win(t, A('hook', 4), END('hook') + 0.1, 0.35), 330);
-  }
-  if (id === 'gdc' && t >= A('gdc', 2) && t < E('gdc', 2) + 0.2) return B('一切 = 动力学刚体 + <span class="acc">约束</span>', '无一例外 · without exception', win(t, A('gdc', 2), E('gdc', 2) + 0.2, 0.3), 380);
-  if (id === 'gdc' && t >= A('gdc', 6)) return B('规则 1：手里的东西，<span class="acc">也不例外</span>', '', win(t, A('gdc', 6), END('gdc') + 0.1, 0.3), 380);
-  if (id === 'power' && t >= A('power', 4)) return B('不做有趣的东西，做<span class="acc">让有趣发生的系统</span>', '堂田卓宏 · GDC 2024', win(t, A('power', 4), END('power') + 0.1, 0.35), 380);
-  if (id === 'glue' && t >= A('glue', 4) && t < E('glue', 4) + 0.1) return B('关节，还是<span class="acc">合体</span>？', '任天堂没说 · 车会晃、会被扯开 → 更像关节（推测）', win(t, A('glue', 4) + 0.3, E('glue', 4) + 0.1, 0.3), 160);
+  const B = (l1, o, top) => ({ html: `<div class="l1">${l1}</div>`, o, top });
+  if (id === 'hook' && t >= A('hook', 3) && t < E('hook', 3) + 0.2) return B('第一次：<span class="acc">炸了</span>', win(t, A('hook', 3), E('hook', 3) + 0.2, 0.2), 200);
+  if (id === 'gdc' && t >= A('gdc', 1) && t < E('gdc', 1) + 0.2) return B('刚体 + <span class="acc">约束</span>', win(t, A('gdc', 1), E('gdc', 1) + 0.2, 0.3), 380);
+  if (id === 'power' && t >= A('power', 2) + 2.7 && t < E('power', 2) + 0.2) return B('没有<span class="acc">车辆程序</span>', win(t, A('power', 2) + 2.7, E('power', 2) + 0.2, 0.3), 200);
+  if (id === 'launch' && t >= A('launch', 4)) return B('任务<span class="acc">完成</span>', win(t, A('launch', 4), END('launch') + 0.1, 0.4), 330);
   return { html: '', o: 0 };
 }
 
@@ -150,21 +97,21 @@ const segLocal = () => curLocal;
 const frameExtra = () => curState?.extra;
 function labelsFor(seg, st, t) {
   const L = [];
+  const top = (html, cls = '') => L.push(`<div class="wl ${cls}" style="left:960px;top:200px">${html}</div>`);
   if (seg.kind === 'demo') {
     if (seg.shot === 'grab_ray' && st.extra?.hit && !st.hold) L.push(wl(st.extra.hit, '打中点', 'bad'));
-    if (seg.shot === 'grab_tele') L.push(`<div class="wl bad" style="left:960px;top:200px">瞬移：改坐标<small>穿墙 · 把木箱挤飞</small></div>`);
-    if (seg.shot === 'grab_vel' && SC.grab && t >= S('grab')) L.push(`<div class="wl" style="left:960px;top:200px">速度驱动<small>被墙挡住 · 只能推</small></div>`);
-    if (seg.shot === 'rotate') L.push(`<div class="wl mono" style="left:960px;top:200px">${(st.extra?.steps || 0) * 45}°<small>每次 45° · 再吸附到网格</small></div>`);
-    if (seg.shot === 'find' && st.extra?.pv) L.push(wl(st.extra.pv.mid, `d = ${st.extra.pv.d.toFixed(2)} m<small>→ ${st.extra.pv.b}</small>`, 'warm mono', -40));
-    if (seg.shot === 'gate_kin') L.push(`<div class="wl bad" style="left:960px;top:200px">运动学闸门<small>质量无穷大 · 按动画往下压</small></div>`);
-    if (seg.shot === 'gate_phys') L.push(`<div class="wl" style="left:960px;top:200px">物理闸门<small>有质量 · 被冰块顶住</small></div>`);
-    if (seg.shot === 'carry_drag') L.push(`<div class="wl bad" style="left:960px;top:200px">只拽被抓的那块</div>`);
-    if (seg.shot === 'carry_all' && t >= A('carry', 2) - 0.05) L.push(`<div class="wl" style="left:960px;top:200px">整坨一起追目标</div>`);
-    if (seg.shot === 'bridge_besiege') L.push(`<div class="wl warm" style="left:960px;top:200px">围攻模式<small>关节超载就断</small></div>`);
-    if (seg.shot === 'fan' && st.parts[1]?.power) L.push(wl(st.overlay?.[0]?.to || st.parts[1].p, '推力', 'warm', -10));
-  }
-  if (seg.kind === 'pair' && seg.labels) {
-    L.push(`<div class="wl" style="left:${seg.labelX?.[0] ?? 560}px;top:190px">${seg.labels[0]}</div><div class="wl warm" style="left:${seg.labelX?.[1] ?? 1360}px;top:190px">${seg.labels[1]}</div>`);
+    if (seg.shot === 'grab_tele') top('瞬移 ✗', 'bad');
+    if (seg.shot === 'grab_vel' && t >= S('grab')) top('给速度 ✓');
+    if (seg.shot === 'rotate') top(`${(st.extra?.steps || 0) * 45}°`, 'mono');
+    if (seg.shot === 'find' && st.extra?.pv) L.push(wl(st.extra.pv.mid, `${st.extra.pv.d.toFixed(2)} m`, 'warm mono', -40));
+    if (seg.shot === 'gate_kin') top('动画闸门', 'bad');
+    if (seg.shot === 'gate_phys') top('物理闸门');
+    if (seg.shot === 'carry_drag') top('只拽一块', 'bad');
+    if (seg.shot === 'carry_all' && t >= A('carry', 2) - 0.05) top('一起动');
+    if (seg.shot === 'bridge_besiege') top('围攻模式', 'warm');
+    if (seg.shot === 'fan' && st.parts[1]?.power) L.push(wl(st.overlay?.[0]?.to || st.parts[1].p, '推', 'warm', -10));
+    if (seg.shot === 'launch_fail' && t >= A('launch', 1)) { const pl = st.parts.find(p => p.type === 'pilot'); if (pl) L.push(wl([pl.p[0], pl.p[1] + 0.6, pl.p[2]], '我没事', '', -10)); }
+    if (seg.shot === 'launch_ok' && st.extra?.alt > 5) L.push(`<div class="wl mono" style="left:1620px;top:200px">${Math.round(st.extra.alt)} m</div>`);
   }
   return L.join('');
 }
@@ -226,12 +173,11 @@ window.renderFrame = async function (t) {
     setHTML($('labA'), seg.la); setHTML($('labB'), seg.lb);
     $('footlabel').textContent = `左：${MAN[seg.sa].credit}　右：${MAN[seg.sb].credit}`;
   }
-  // 卡片出现时压暗背景
-  const cardDim = { hook: t >= A('hook', 1) + 1.6 && t < E('hook', 1) + 0.1 ? 0.88 : t >= A('hook', 4) ? 0.55 : 0, repo: 0.72,
-    gdc: (t >= A('gdc', 1) && t < E('gdc', 3) + 0.2) ? 0.85 : t >= A('gdc', 6) ? 0.55 : 0, power: t >= A('power', 4) ? 0.6 : 0,
-    glue: t >= A('glue', 4) && t < E('glue', 4) ? 0.35 : 0, outro: 0.6 + 0.25 * ramp(t, A('outro', 1) - 0.2, 0.5) };
+  // 大字 / 卡片出现时压暗背景
+  const cardDim = { repo: 0.72, outro: 0.45 + 0.4 * ramp(t, A('outro', 1) + 2.0, 0.5),
+    hook: (t >= A('hook', 2) + 0.3 && t < A('hook', 3) - 0.1) ? 0.35 : 0 };
   dim = cardDim[id] || 0;
-  if (id === 'gdc' && t >= A('gdc', 4) - 0.05 && t < A('gdc', 6) - 0.05) dim = 0;
+  if (bigFor(id, t).o > 0) dim = Math.max(dim, segAt(t).kind === 'foot' ? 0.82 : 0.5);
 
   // 代码卡片
   const cf = codeFor(id, t);

@@ -135,10 +135,18 @@ function buildPartMesh(type, mats) {
     const noz = add(new THREE.CylinderGeometry(r * 0.7, r * 1.05, hh * 0.3, 18), mats.bronzeDark); noz.position.y = -hh * 0.85;
     for (let i = 0; i < 3; i++) { const f = add(new THREE.BoxGeometry(0.03, 0.3, 0.22), mats.bronzeDark); const a = (i / 3) * Math.PI * 2; f.position.set(Math.cos(a) * r, -hh * 0.6, Math.sin(a) * r); f.rotation.y = -a; }
     const band = add(new THREE.CylinderGeometry(r * 1.02, r * 1.02, 0.07, 18), mats.glowTeal, false); band.position.y = hh * 0.3;
-    const flame = new THREE.Mesh(new THREE.ConeGeometry(r * 0.8, 1.4, 16, 1, true), mats.flame);
-    flame.rotation.x = Math.PI; flame.position.y = -hh - 0.75; g.add(flame);
+    const flame = new THREE.Mesh(new THREE.ConeGeometry(r * 1.1, 2.4, 16, 1, true), mats.flame);
+    flame.rotation.x = Math.PI; flame.position.y = -hh - 1.25; g.add(flame);
     g.userData.flame = flame; g.userData.glow = [band];
     shells.push(new THREE.CylinderGeometry(r, r, hh * 2, 18));
+  } else if (type === 'pilot') {
+    // 乘客：一只橘子宇航员（原创造型）
+    const r = s[1];
+    const body = new THREE.Mesh(new THREE.SphereGeometry(r, 28, 20), mats.orange); body.castShadow = true; g.add(body); shells.push(body.geometry);
+    for (const sx of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 8), mats.eye); e.position.set(sx * 0.11, 0.06, r * 0.93); g.add(e); }
+    const smile = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.015, 6, 16, Math.PI), mats.eye); smile.position.set(0, -0.04, r * 0.95); smile.rotation.z = Math.PI; g.add(smile);
+    const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 8), mats.leaf); leaf.scale.set(1.4, 0.35, 0.7); leaf.position.set(0.06, r + 0.02, 0); leaf.rotation.z = 0.4; g.add(leaf);
+    const helmet = new THREE.Mesh(new THREE.SphereGeometry(r * 1.22, 28, 20), mats.glass); g.add(helmet);
   } else if (type === 'balloon') {
     const r = s[1];
     const geo = new THREE.SphereGeometry(r, 28, 20); add(geo, mats.balloon); shells.push(geo);
@@ -187,9 +195,9 @@ export class View {
     const geo = new THREE.SphereGeometry(800, 32, 16);
     const mat = new THREE.ShaderMaterial({
       side: THREE.BackSide, depthWrite: false, fog: false,
-      uniforms: { uSun: { value: new THREE.Vector3(0.45, 0.55, -0.7).normalize() } },
+      uniforms: { uSun: { value: new THREE.Vector3(0.45, 0.55, -0.7).normalize() }, uAlt: { value: 0 } },
       vertexShader: 'varying vec3 vD; void main(){ vD = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0);} ',
-      fragmentShader: `uniform vec3 uSun; varying vec3 vD;
+      fragmentShader: `uniform vec3 uSun; uniform float uAlt; varying vec3 vD;
         float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
         float n(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(h(i),h(i+vec2(1,0)),f.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x), f.y); }
         void main(){ float y = vD.y;
@@ -201,10 +209,16 @@ export class View {
           vec2 uv = vD.xz / (vD.y + 0.18) * 1.6;
           float cl = n(uv*1.3) * 0.6 + n(uv*3.1) * 0.3 + n(uv*7.0)*0.1;
           cl = smoothstep(0.52, 0.8, cl) * smoothstep(0.02, 0.25, y);
-          c = mix(c, vec3(1.0,0.99,0.97), cl*0.85);
+          c = mix(c, vec3(1.0,0.99,0.97), cl*0.85*(1.0-uAlt));
+          // 越飞越高：天空变暗、出星星
+          vec3 space = mix(vec3(0.01,0.02,0.06), vec3(0.08,0.2,0.45), smoothstep(-0.05, 0.25, -y + 0.15));
+          float st = step(0.9975, h(floor(vD.xz / (abs(vD.y)+0.3) * 380.0) + floor(vD.y*380.0))) * smoothstep(0.0, 0.3, y);
+          space += vec3(st);
+          space += vec3(1.0,0.86,0.6) * pow(s, 600.0)*6.0;
+          c = mix(c, space, uAlt);
           gl_FragColor = vec4(c, 1.0); }`,
     });
-    this.scene.add(new THREE.Mesh(geo, mat));
+    this.sky = mat; this.skyMesh = new THREE.Mesh(geo, mat); this.scene.add(this.skyMesh);
   }
   _lights() {
     const hemi = new THREE.HemisphereLight('#dcefff', '#5b7a3a', 0.95); this.scene.add(hemi);
@@ -317,6 +331,10 @@ export class View {
       bronzeDark: std({ color: '#8a5a2c', metalness: 0.6, roughness: 0.5 }),
       stoneTeal: std({ color: '#6f8f86', roughness: 0.75, flatShading: true }),
       rocket: std({ color: '#e8e1d0', roughness: 0.55 }),
+      orange: std({ color: '#ff9f1c', roughness: 0.55 }),
+      eye: new THREE.MeshBasicMaterial({ color: '#1b1208' }),
+      leaf: std({ color: '#3f9a2e', roughness: 0.6 }),
+      glass: new THREE.MeshPhysicalMaterial({ color: '#dff6ff', roughness: 0.05, transmission: 0.9, transparent: true, opacity: 0.35, depthWrite: false }),
       ice: new THREE.MeshPhysicalMaterial({ color: '#bfeaff', roughness: 0.08, metalness: 0, transmission: 0.55, thickness: 0.6, transparent: true, opacity: 0.88, emissive: new THREE.Color('#3aa8d8'), emissiveIntensity: 0.25 }),
       gate: std({ color: '#7d786c', roughness: 0.85, flatShading: true }),
       gateTrim: new THREE.MeshStandardMaterial({ color: '#111', emissive: new THREE.Color('#ffb347'), emissiveIntensity: 1.4 }),
@@ -325,7 +343,7 @@ export class View {
       flame: new THREE.ShaderMaterial({
         uniforms: { uTime: { value: 0 }, uAmt: { value: 0 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
         vertexShader: 'varying vec2 vUv; uniform float uTime; void main(){ vUv=uv; vec3 p=position; p.xz *= 1.0 + 0.15*sin(uTime*40.0+uv.y*10.0); gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);} ',
-        fragmentShader: 'varying vec2 vUv; uniform float uAmt; void main(){ float a = pow(vUv.y, 1.6) * uAmt; vec3 c = mix(vec3(1.0,0.35,0.05), vec3(1.0,0.95,0.7), vUv.y); gl_FragColor = vec4(c*2.2, a); }',
+        fragmentShader: 'varying vec2 vUv; uniform float uAmt; void main(){ float k = 1.0 - vUv.y; float a = pow(k, 1.3) * uAmt; vec3 c = mix(vec3(1.0,0.22,0.02), vec3(1.0,0.92,0.55), pow(k, 2.5)); gl_FragColor = vec4(c*2.6, a); }',
       }),
       glue: new THREE.MeshStandardMaterial({ color: '#2a6', emissive: GLOW.clone(), emissiveIntensity: 1.6, roughness: 0.3, transparent: true, opacity: 0.92 }),
       glueHinge: new THREE.MeshStandardMaterial({ color: '#2a6', emissive: new THREE.Color('#9dffcf'), emissiveIntensity: 1.8, roughness: 0.3 }),
@@ -356,7 +374,7 @@ export class View {
     this.grabDotB = this.grabDot.clone(); this.scene.add(this.grabDotB);
     this.arrows = []; this.gateMeshes = []; this._staticsKey = '';
     // 粒子：事件（粘、断、拆）的爆发，纯函数于时间，所以视频逐帧确定
-    const PN = 1400;
+    const PN = 3200;
     const pg = new THREE.BufferGeometry();
     pg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(PN * 3), 3));
     pg.setAttribute('color', new THREE.BufferAttribute(new Float32Array(PN * 3), 3));
@@ -367,6 +385,16 @@ export class View {
       fragmentShader: 'varying vec3 vC; void main(){ float d = length(gl_PointCoord-0.5); if(d>0.5) discard; gl_FragColor = vec4(vC*(1.0-d*1.6), 1.0-d*2.0); }',
     }));
     this.pts.frustumCulled = false; this.scene.add(this.pts); this.PN = PN;
+    const SN = 900, sg = new THREE.BufferGeometry();
+    sg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(SN * 3), 3));
+    sg.setAttribute('size', new THREE.BufferAttribute(new Float32Array(SN), 1));
+    sg.setAttribute('alpha', new THREE.BufferAttribute(new Float32Array(SN), 1));
+    this.smoke = new THREE.Points(sg, new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false,
+      vertexShader: 'attribute float size; attribute float alpha; varying float vA; void main(){ vA = alpha; vec4 mv = modelViewMatrix*vec4(position,1.0); gl_PointSize = size * 300.0 / -mv.z; gl_Position = projectionMatrix*mv; }',
+      fragmentShader: 'varying float vA; void main(){ float d = length(gl_PointCoord-0.5); if(d>0.5) discard; float a = vA * smoothstep(0.5, 0.15, d); gl_FragColor = vec4(vec3(0.93,0.93,0.95) - d*0.25, a); }',
+    }));
+    this.smoke.frustumCulled = false; this.scene.add(this.smoke); this.SN = SN;
   }
   _hand() {
     // 第一人称的手（原创造型：铜色护臂 + 发光掌心）
@@ -417,6 +445,9 @@ export class View {
       if (this.camera.fov !== c.fov) { this.camera.fov = c.fov; this.camera.updateProjectionMatrix(); }
       this.follow(new THREE.Vector3().fromArray(c.look));
     }
+    this.skyMesh.position.copy(this.camera.position);
+    { const alt = this.camera.position.y, k = Math.min(1, Math.max(0, (alt - 40) / 320)); this.sky.uniforms.uAlt.value = k * k * (3 - 2 * k);
+      this.scene.fog.near = 90 + alt * 2; this.scene.fog.far = 460 + alt * 4; }
     if (state.statics) { const key = JSON.stringify(state.statics.map(s => [s.p, s.half])); if (key !== this._staticsKey) { this._staticsKey = key; this.setStatics(state.statics); } }
     this._gates(state.gates || []);
     this._overlay(state.overlay || []);
@@ -585,6 +616,15 @@ export class View {
         put(v.x, v.y, v.z, 1.4 * (1 - ph), 0.7 * (1 - ph * 0.8), 0.2 * (1 - ph), 0.09 * (1 - ph) + 0.02);
       }
     }
+    // 火箭尾烟：director 记下的历史位置（普通混合的灰白烟团）
+    { const sp = this.smoke.geometry.attributes.position.array, ss = this.smoke.geometry.attributes.size.array, sa = this.smoke.geometry.attributes.alpha.array;
+      let m = 0; const trail = state.extra?.trail || [];
+      trail.forEach(([x, y, z, age], i) => { for (let k = 0; k < 3 && m < this.SN; k++, m++) {
+        const j = i * 3 + k, spread = 0.3 + age * 1.4;
+        sp[m * 3] = x + (hash(j * 1.3) - 0.5) * spread; sp[m * 3 + 1] = y + (hash(j * 3.9) - 0.5) * 0.8 - age * 0.3; sp[m * 3 + 2] = z + (hash(j * 2.7) - 0.5) * spread;
+        ss[m] = 1.4 + age * 2.2; sa[m] = Math.max(0, 1 - age / 4.5) * 0.55; } });
+      for (let i = m; i < this.SN; i++) { ss[i] = 0; sa[i] = 0; }
+      this.smoke.geometry.attributes.position.needsUpdate = this.smoke.geometry.attributes.size.needsUpdate = this.smoke.geometry.attributes.alpha.needsUpdate = true; }
     for (let i = n; i < this.PN; i++) size[i] = 0;
     this.pts.geometry.attributes.position.needsUpdate = true; this.pts.geometry.attributes.color.needsUpdate = true; this.pts.geometry.attributes.size.needsUpdate = true;
     this.pts.geometry.setDrawRange(0, Math.max(1, n));

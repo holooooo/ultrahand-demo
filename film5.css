@@ -78,3 +78,13 @@
 #pair{position:absolute;inset:0;z-index:1;opacity:0}
 #pair.on{opacity:1}
 #subbg{position:absolute;left:0;right:0;bottom:0;height:260px;z-index:14;background:linear-gradient(0deg,rgba(0,0,0,.72),rgba(0,0,0,0));opacity:0;pointer-events:none}
+.tiny{position:absolute;padding:22px 30px;border-radius:20px;background:rgba(6,14,12,.78);border:2px solid rgba(255,255,255,.18);text-align:center}
+.tiny p{font-size:34px;font-weight:900;margin-top:6px}
+.opus{position:absolute;left:50%;bottom:190px;transform:translateX(-50%);display:flex;gap:16px;align-items:center;padding:16px 30px;border-radius:999px;background:rgba(10,10,14,.82);border:2px solid #ffb27a;font-size:36px;font-weight:900;color:#fff;white-space:nowrap}
+.opus b{font-size:22px;font-weight:600;color:#ffb27a;margin-left:14px}
+.opus b:first-child{margin-left:0}
+.titlecard .t{line-height:1.12}
+.titlecard .t{color:#fff;-webkit-text-stroke:8px #000;paint-order:stroke fill}
+.titlecard .t em{color:#ffd21f}
+#bigtext .l1{-webkit-text-stroke:6px #000;paint-order:stroke fill}
+#bigtext .acc{color:#ffd21f}

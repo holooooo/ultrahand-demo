@@ -1,6 +1,6 @@
 // 视频里的每一个演示镜头：初始摆放 + 时间轴上的操作 + 机位。全部确定性。
 import * as THREE from 'three';
-import { buildCar, buildFlyer, buildBridge, glueTo } from './presets.js';
+import { buildCar, buildFlyer, buildBridge, buildRocketShip, glueTo } from './presets.js';
 import { orbit, smooth, lerpV } from './director.js';
 import { PART_LIMIT } from './parts.js';
 
@@ -307,3 +307,41 @@ export const PART_CAP = PART_LIMIT;
 // 封面用：同一段开场操作，第三人称近景（光束 + 预览线 + 车）
 shot({ ...SHOTS.hero, id: 'hero_cover', hand: false, handAt: undefined,
   cam: (ctx, t) => ({ pos: V(-3.9, 2.0, 3.4), look: V(-0.6, 0.8, 0.2), fov: 44 }) });
+
+// ---- 载人航天 ----------------------------------------------------------------
+const trailOf = (ctx, t) => {
+  const d = ctx.data; d.trail ||= [];
+  const lit = d.ship.rockets.some(r => r.power && r.burn > 0);
+  if (lit && (!d.lastTrail || t - d.lastTrail >= 0.05)) { d.lastTrail = t; const p = ctx.sim.pose(d.ship.board).p; d.trail.push([p.x, Math.max(0.4, p.y - 1.6), p.z, t]); }
+  d.trail = d.trail.filter(e => t - e[3] < 4.5);
+  return d.trail.map(([x, y, z, t0]) => [x, y, z, t - t0]);
+};
+// 第一次：围攻模式，关节扛不住推力，散架
+shot({
+  id: 'launch_fail', dur: 9, mode: 'besiege', breakForce: 110,
+  setup(ctx) { ctx.data.ship = buildRocketShip(ctx.sim, V(0, 0, 0)); ctx.data.ship.rockets[1].thrustMul = 1.25; },
+  actions: [[1.6, ctx => ctx.sim.togglePower(ctx.data.ship.board, true)]],
+  cam: camKeys([[0, V(3.6, 1.3, 5.0), V(0, 1.0, 0), 50], [1.6, V(3.8, 1.3, 5.2), V(0, 1.2, 0), 50], [4.0, V(6, 2.6, 8.5), V(0, 2.2, 0), 54], [9, V(6.5, 2.4, 9), V(0, 1.0, 0), 54]]),
+  extra: (ctx, t) => ({ trail: trailOf(ctx, t) }),
+});
+// 第二次：合并模式（一个刚体），稳稳升空
+const shipP = (add) => (ctx) => ctx.sim.pose(ctx.data.ship.board).p.clone().add(add);
+shot({
+  id: 'launch_ok', dur: 36, mode: 'merge',
+  setup(ctx) { ctx.data.ship = buildRocketShip(ctx.sim, V(0, 0, 0), { thrustMul: 0.4, burn: 30 }); ctx.data.ship.board.body.setAngularDamping(2.0); },
+  actions: [[3.0, ctx => ctx.sim.togglePower(ctx.data.ship.board, true)]],
+  cam: camKeys([
+    [0, V(5.0, 1.4, 7.0), V(0, 1.0, 0), 48],
+    [3.0, V(4.2, 1.2, 6.0), V(0, 1.1, 0), 48],
+    [6.0, shipP(V(5, -4, 9)), shipP(V(0, 0.5, 0)), 50],
+    [12, shipP(V(3, -6, 7)), shipP(V(0, 0, 0)), 54],
+    [17, shipP(V(5, 1.5, 6)), shipP(V(-2, -1.5, 0)), 56],
+    [22, shipP(V(6, 2.5, 7)), shipP(V(-4, -3, -2)), 58],
+    [36, shipP(V(8, 3.5, 9)), shipP(V(-6, -4, -3)), 58],
+  ]),
+  extra: (ctx, t) => ({ trail: trailOf(ctx, t), alt: ctx.sim.pose(ctx.data.ship.board).p.y }),
+});
+
+// 封面：低机位仰拍升空的载人火箭
+shot({ ...SHOTS.launch_ok, id: 'launch_cover',
+  cam: (ctx, t) => { const p = ctx.sim.pose(ctx.data.ship.board).p; return { pos: V(3.4, 0.7, 5.6), look: p.clone().add(V(0, 1.5, 0)), fov: 50 }; } });
