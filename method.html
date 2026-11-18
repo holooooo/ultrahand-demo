@@ -1,0 +1,137 @@
+<h1>究极手，是怎么把东西粘住的</h1>
+<p class="lead">任天堂在 GDC 2024 讲了王国之泪物理系统的“铁律”，却从没公开过究极手本身的代码。所以我们不抄代码，只照规则重做一遍：抓、转、找点、粘、整坨搬、动力，六步，每一步只多做一件事，每一步都能在「亲手试试」里开关对比。<span class="cf h">官方</span></p>
+<p class="note">本页是原创教学原型，只讲方法，伪代码每段不超过 8 行。完整源码：B站视频三连后在评论区留言，作者私信发送。可信度标签：<span class="cf h">官方</span> GDC 讲座/官方采访，<span class="cf m">媒体</span> 媒体转述，<span class="cf l">社区</span> 玩家实测/Wiki，<span class="cf t">推测</span> 我们自己的推断或未核实。GDC 原视频本轮没能直接核对，讲座内容来自 Famitsu 等媒体对幻灯片和发言的转述。</p>
+
+<h2>任天堂的铁律</h2>
+<ul>
+  <li>引擎分三层：Havok 物理中间件，之上是任天堂自研物理库，再往上是王国之泪专用层。<span class="cf h">官方</span><span class="cf m">媒体</span>（Havok 一词以 Famitsu 幻灯片图文为准，待看视频确认）</li>
+  <li>核心规则：世界里所有物体都由<b>动力学刚体 + 约束</b>构成，无一例外。<span class="cf h">官方</span></li>
+  <li>被禁用的是<b>运动学刚体</b>（按动画强行移动）：它实现简单，但质量无穷大，会让物理计算崩坏。<span class="cf h">官方</span></li>
+  <li>例子：早期神庙闸门是动画驱动的，玩家用究极手塞进一块冰，闸门直接把冰压进地面并高速抖动；改成物理驱动后，冰块能把闸门顶住、留出缝隙，反而衍生出新解法。<span class="cf h">官方</span></li>
+  <li>倒转乾坤（Recall）也一样：初版倒转回来的石块会把马车撞碎，改成物理驱动后和马车按同一套规则计算。<span class="cf h">官方</span></li>
+  <li>“没有车辆程序”：车、门、桨船都由轮子、木板、链条等部件各按物理规则凑出来。<span class="cf h">官方</span>一个轮胎由 wheel / motor / shaft 三个刚体组成，轴不直接连车轮，而是支撑马达，并带悬挂。<span class="cf h">官方</span></li>
+  <li>设计哲学：“不是做有趣的东西，而是做让有趣的事情发生的系统”。<span class="cf h">官方</span></li>
+</ul>
+<p>这条铁律就是我们的第一条规则：<b>连你手里拿着的东西，也不能例外</b>。</p>
+
+<h2>六步实现</h2>
+
+<div class="layer">
+  <h3><b>01</b>抓：给速度，别改坐标</h3>
+  <p class="add">从屏幕中心打射线，记下命中点（零件局部坐标）；每帧用“目标位置 − 当前位置”乘系数得到速度，交给物理引擎。朝向存成相对玩家偏航角的值，所以转身时东西跟着转。</p>
+  <p class="add">为什么：直接改坐标就是运动学老路，会穿墙，也会把别的零件挤飞。官方只说物理驱动用速度/加速度控制，“用速度驱动抓取”是我们按铁律做的推断。<span class="cf t">推测</span></p>
+<pre><code>grabLocal = body.toLocal(hit.point)
+each frame:
+  target = camera.pos + camera.dir * holdDist + yawRot * relOffset
+  anchor = body.toWorld(grabLocal)
+  v = clamp((target - anchor) * gain, maxSpeed)
+  body.setLinvel(v)        // 不 setTranslation
+  body.setAngvel(orientErr * gain)</code></pre>
+  <p class="add">试试：关掉「L0 瞬移（会穿墙）」是默认的速度驱动；打开它，抓着的木板会穿过墙。</p>
+</div>
+
+<div class="layer">
+  <h3><b>02</b>转：45° 一格并吸附</h3>
+  <p class="add">每按一次旋转键转 45°，然后把朝向吸附到最近的网格角度，木板才摆得正。游戏里具体怎么吸附任天堂没讲，45° 是我们自己的设计选择。<span class="cf t">推测</span>（游戏里按住 R 配合方向键旋转，来自社区指南，步进角度未确认。<span class="cf l">社区</span>）</p>
+<pre><code>onRotateKey(axis):
+  relRot = rotate(axis, 45deg) * relRot
+  if snapRotate:
+    relRot = snapToGrid(relRot, 45deg)  // 四元数吸到最近网格</code></pre>
+  <p class="add">试试：「L2 45° 吸附」开关。关掉后旋转是连续的，很难摆正。</p>
+</div>
+
+<div class="layer">
+  <h3><b>03</b>找点：问引擎“最近的两点”</h3>
+  <p class="add">举着的时候，每帧让“这一坨零件”的碰撞体和别的零件的碰撞体互相求最近点，距离小于阈值就画预览线。物理引擎自带这个查询（Rapier 的 <code>contactCollider</code> 返回最近点对和距离），不用自己写几何。</p>
+  <p class="add">媒体报道过一件任天堂专利：粘合时在两个物体上同时显示吸附点。<span class="cf m">媒体</span>（我们没能确认专利编号与权利要求，<span class="cf t">待核实</span>）</p>
+<pre><code>best = null
+for a in held.colliders:
+  for b in others.colliders:
+    c = a.contactCollider(b, threshold)
+    if c and (!best or c.dist &lt; best.dist): best = c
+preview = best   // 两个最近点 + 距离</code></pre>
+  <p class="add">试试：「L3 找粘接点」开关，换个角度最近点就会跳。</p>
+</div>
+
+<div class="layer">
+  <h3><b>04</b>粘：先贴合，再连接</h3>
+  <p class="add">松手时先把整个被抓的装配体平移“最近点之间的间隙”，让两点贴上，再把两个零件在粘合图里连一条边。这条边怎么实现，是本作最关键的选择，见下文三种模式对比。</p>
+  <p class="add">内部表示是我们的猜测：粘出来的车会晃、会被扯开，行为更像关节，但任天堂从未确认粘合体内部是关节还是合并刚体。<span class="cf t">推测</span>另外，粘在一起的零件之间要关掉碰撞，否则会互相顶着打架（用接触过滤钩子实现）。</p>
+<pre><code>release():
+  gap = best.pointB - best.pointA
+  assembly.translate(gap)
+  glue.addEdge(partA, partB)
+  realize(mode)       // joint / merge / besiege
+  contactFilter: same assembly =&gt; no collision</code></pre>
+  <p class="add">试试：「模式」三个按钮（关节 / 合并 / 围攻式），搭一座木板桥再砸一块石头。</p>
+</div>
+
+<div class="layer">
+  <h3><b>05</b>整坨搬：每个零件追同一个变换</h3>
+  <p class="add">粘完再抓，抓的是一整个装配体。如果只驱动被抓的那一块，其余全靠关节拖着走，长了就软塌塌。所以让装配体里每个零件都按同一个刚体变换去追目标，关节几乎不用出力。</p>
+  <p class="add">上限：玩家实测一次最多粘 21 个零件，Zelda Wiki 采用该数；这不是官方公布的规格，原因未知。<span class="cf l">社区</span>我们的原型沿用 21。零件越多，要同时解的约束越多，所以稳定性和求解器迭代次数有关。</p>
+<pre><code>driveAll:
+  T = rigidTransformToward(target)   // 一个整体位姿误差
+  for p in assembly.parts:
+    p.setLinvel(velocityOf(T, p.pos))
+    p.setAngvel(T.angular)</code></pre>
+  <p class="add">试试：「L5 整坨一起搬」开关；再把「求解器迭代次数」拉到 1，同一根长杆会变面条，拉到 8 才站得直。游戏的求解器参数没有任何公开来源，我们不做对应。<span class="cf t">推测</span></p>
+</div>
+
+<div class="layer">
+  <h3><b>06</b>动力：风扇是力，轮子是铰链</h3>
+  <p class="add">风扇最简单：每帧在它的位置、沿局部 +Z 方向施加推力（<code>addForceAtPoint</code>）；热气球同理，施加向上的升力。轮子要能转，所以不能合并，也不能用固定关节：用两个球关节凑成一条铰链轴，再给轮子和车身施加大小相等、方向相反的马达扭矩。官方讲过轮胎是三刚体加悬挂；风扇、火箭、转向杆怎么施力，官方没讲，下面是我们自己的做法。<span class="cf t">推测</span></p>
+<pre><code>fan.update():
+  body.addForceAtPoint(localZ * thrust, fan.pos)
+wheel.update():
+  hinge = sphericalJoint(axisA) + sphericalJoint(axisB)
+  wheel.addTorque( axis * motor)
+  chassis.addTorque(-axis * motor)   // 等大反向</code></pre>
+  <p class="add">试试：这一步没有开关，直接在亲手试试里放轮子和风扇，装上去就跑。没有一行“车辆程序”。</p>
+</div>
+
+<h2>关节 vs 合并 vs 围攻式</h2>
+<table class="cmp">
+  <tr><th>维度</th><th>关节</th><th>合并</th><th>围攻式</th></tr>
+  <tr><td>怎么连</td><td>每块一个刚体，中间加固定关节</td><td>多个碰撞体挂到同一个刚体上</td><td>关节 + 受力检查</td></tr>
+  <tr><td>稳定性</td><td>受迭代次数影响，会弯、会晃、长了会软</td><td>铁板一块，最稳</td><td>同关节，但超载就断</td></tr>
+  <tr><td>成本</td><td>刚体和约束都多，数量越多越贵</td><td>最便宜，只有一个刚体</td><td>多一次每帧受力估算</td></tr>
+  <tr><td>怎么拆开</td><td>删掉关节即可</td><td>要把碰撞体拆回新刚体，重算质量和惯性</td><td>删关节，或超载自动断开</td></tr>
+  <tr><td>转动部件</td><td>可以：改用转动关节</td><td>不行，合并后无法单独转</td><td>可以</td></tr>
+  <tr><td>更像哪个游戏</td><td>像王国之泪的手感<span class="cf t">推测</span></td><td>无对应<span class="cf t">推测</span></td><td>像围攻<span class="cf l">社区</span></td></tr>
+</table>
+<p class="note small">围攻式的断裂检查：每帧估算关节被拉开的距离 × 零件质量 × 系数 k，连续 4 帧超过阈值就断开。这是我们的简化，不是围攻的实际算法。<span class="cf t">推测</span></p>
+
+<h2>王国之泪 vs 围攻</h2>
+<table class="cmp">
+  <tr><th>维度</th><th>王国之泪 究极手</th><th>围攻 Besiege</th></tr>
+  <tr><td>建造方式</td><td>实时：在运行中的物理世界里边粘边玩<span class="cf h">官方</span></td><td>先造后仿真：build 模式只是摆放，开始后才生成关节<span class="cf l">社区</span><span class="cf t">待核实</span></td></tr>
+  <tr><td>引擎</td><td>Havok + 任天堂自研物理库 + 专用层<span class="cf h">官方</span></td><td>Unity<span class="cf h">官方</span>；物理推测为内置 PhysX<span class="cf t">推测</span></td></tr>
+  <tr><td>物理哲学</td><td>“全部物理，无一例外”，禁用运动学刚体<span class="cf h">官方</span></td><td>在逼真模拟与古怪物理之间找中间地带<span class="cf m">媒体</span></td></tr>
+  <tr><td>连接模型</td><td>官方只说“刚体 + 约束”，粘合内部未公开<span class="cf h">官方</span>内部实现为我们的推测<span class="cf t">推测</span></td><td>关节连接碰撞体，相邻块不互碰，关节可断<span class="cf l">社区</span><span class="cf t">待核实</span></td></tr>
+  <tr><td>可破坏性</td><td>粘合体本身耐用；21 部件上限为玩家实测<span class="cf l">社区</span></td><td>核心卖点：关节可断，机器被打碎<span class="cf l">社区</span></td></tr>
+  <tr><td>专用逻辑</td><td>没有车辆程序，一切靠部件组合<span class="cf h">官方</span></td><td>各方块有特定行为<span class="cf t">推测</span></td></tr>
+  <tr><td>设计目标</td><td>让玩家在世界不崩的前提下随手组合“乘法玩法”<span class="cf h">官方</span></td><td>造出扛得住的攻城机器，物理本身就是玩法<span class="cf t">待核实</span></td></tr>
+</table>
+<p class="note small">“王国之泪必须取消一切非物理对象，因为是实时粘合”是我们的推论，依据是官方演讲，但官方没有这样直接说过。<span class="cf t">推测</span></p>
+
+<h2>来源</h2>
+<ul class="src">
+  <li>Famitsu 物理篇 <a href="https://www.famitsu.com/news/202403/21337727.html" target="_blank" rel="noopener">famitsu.com/news/202403/21337727</a> <span class="cf m">媒体</span>（转述 GDC 幻灯片）</li>
+  <li>Famitsu 声音篇 <a href="https://www.famitsu.com/news/202403/22337814.html" target="_blank" rel="noopener">famitsu.com/news/202403/22337814</a> <span class="cf m">媒体</span></li>
+  <li>4Gamer <a href="https://www.4gamer.net/games/578/G057883/20240321087/" target="_blank" rel="noopener">4gamer.net</a> <span class="cf m">媒体</span></li>
+  <li>Game Watch <a href="https://game.watch.impress.co.jp/docs/news/1593891.html" target="_blank" rel="noopener">game.watch.impress.co.jp</a> <span class="cf m">媒体</span></li>
+  <li>B站专栏 物理篇（翻译 Famitsu） <a href="https://www.bilibili.com/read/cv33358973/" target="_blank" rel="noopener">cv33358973</a> <span class="cf m">媒体</span></li>
+  <li>Digital Trends <a href="https://digitaltrends.com/computing/how-nintendo-designed-tears-of-the-kingdom-physics" target="_blank" rel="noopener">How Nintendo designed TotK physics</a> <span class="cf m">媒体</span></li>
+  <li>Automaton（早期混乱录像） <a href="https://automaton-media.com/articles/newsjp/20240524-294727/" target="_blank" rel="noopener">automaton-media.com</a> <span class="cf m">媒体</span></li>
+  <li>Nintendo Ask the Developer Vol.4 <a href="https://www.nintendo.com/sg/interview/totk/04.html" target="_blank" rel="noopener">nintendo.com/sg/interview/totk/04</a> <span class="cf h">官方</span></li>
+  <li>专利线索 Automaton <a href="https://automaton-media.com/en/news/20240206-26741/" target="_blank" rel="noopener">automaton-media.com</a> <span class="cf m">媒体</span> <span class="cf t">待核实</span></li>
+  <li>Zelda Wiki：Ultrahand（21 部件上限） <a href="https://zeldawiki.wiki/wiki/Ultrahand" target="_blank" rel="noopener">zeldawiki.wiki</a> <span class="cf l">社区</span></li>
+  <li>Besiege Press Kit <a href="https://spiderlinggames.notion.site/Besiege-Press-Kit-fc57c9b948724374bbaec49c75478377" target="_blank" rel="noopener">Spiderling Press Kit</a> <span class="cf h">官方</span></li>
+  <li>PCGamesN 引述 Spiderling 的设计理念 <a href="https://www.pcgamesn.com/besiege/the-broken-beyond-gravity" target="_blank" rel="noopener">pcgamesn.com</a> <span class="cf m">媒体</span></li>
+  <li>Besiege Wiki：Colliders（关节细节，仅见搜索摘要） <a href="https://besiege.fandom.com/wiki/Colliders" target="_blank" rel="noopener">besiege.fandom.com</a> <span class="cf l">社区</span> <span class="cf t">待核实</span></li>
+  <li>Unity Joint.breakForce（通用背景，非 Besiege 专有） <a href="https://docs.unity3d.com/ScriptReference/Joint-breakForce.html" target="_blank" rel="noopener">docs.unity3d.com</a> <span class="cf h">官方</span></li>
+</ul>
+
+<h2>许可与声明</h2>
+<p class="note">本页和互动页面是原创教学原型，不含任天堂或 Spiderling 的任何代码与美术。视频中使用的游戏画面已在视频里标注出处。《塞尔达传说 王国之泪》《围攻》及相关名称均属各自权利人所有，本系列与其无任何关联。</p>

@@ -1,0 +1,28 @@
+:root{--gold:#7dffb0;--uh:#5dffa6}
+.tabs button.on{background:rgba(93,255,166,.14)}
+button.on{background:var(--uh);border-color:var(--uh);color:#062312}
+.avatar{border-color:var(--uh)}
+.cross{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;pointer-events:none}
+.cross i{position:absolute;inset:9px;border-radius:50%;border:2px solid rgba(255,255,255,.85);box-shadow:0 0 6px rgba(0,0,0,.5)}
+.cross.aim i{inset:4px;border-color:var(--uh);box-shadow:0 0 12px var(--uh)}
+.cross.hold i{inset:2px;border-color:#f6ff7a;border-style:dashed;animation:spin 1.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:absolute;left:50%;top:22%;transform:translateX(-50%);padding:8px 20px;border-radius:99px;background:rgba(6,35,18,.8);border:1px solid var(--uh);color:#d8ffe8;font-weight:700;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.on{opacity:1}
+.start{position:absolute;inset:0;display:grid;place-items:center;background:rgba(5,12,10,.35);cursor:pointer}
+.start.off{display:none}
+.startcard{max-width:560px;padding:22px 26px;border-radius:18px;background:rgba(10,18,16,.82);border:1px solid rgba(93,255,166,.4);backdrop-filter:blur(14px)}
+.startcard h2{margin:0 0 10px;color:var(--uh)}
+.startcard p{margin:6px 0;color:#cfe6da;font-size:13px}
+kbd{font:700 11px ui-monospace,Menlo,monospace;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:5px;padding:0 6px;margin:0 2px}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.modes button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:8px}
+.modes small{font-size:11px;opacity:.8;line-height:1.35}
+.lvgrid button.lit{background:rgba(93,255,166,.14);border-color:rgba(93,255,166,.45);color:#c9ffe0}
+.tip{background:rgba(93,255,166,.07);border-color:rgba(93,255,166,.3)}
+.slider output{color:var(--uh)}
+input[type=range]{accent-color:var(--uh)}
+.spawns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.spawns button{padding:6px 4px;font-size:12px}
+.spawns kbd{margin-right:4px}
+.mini kbd{font-size:10px}

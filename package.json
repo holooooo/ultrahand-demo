@@ -1,0 +1,17 @@
+{
+  "name": "ultrahand-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "机制拆解 05 · 究极手：Three.js + Rapier 复刻原理演示",
+  "scripts": {
+    "dev": "node tools/serve.mjs . 8025",
+    "build": "node tools/build.mjs"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@dimforge/rapier3d-compat": "^0.14.0",
+    "esbuild": "^0.28.2",
+    "three": "^0.170.0"
+  }
+}

@@ -1,0 +1,80 @@
+/* 05 · 究极手：绿色主色 */
+#brand span{color:#9dffcf}
+#rail i.done{background:rgba(125,255,176,.7)}
+#rail i.on{background:#7dffb0;box-shadow:0 0 12px #3dff8f}
+#rail em{color:#c9ffe0}
+#kicker{color:#7dffb0}
+.card h3{color:#7dffb0}
+#bigtext .acc{color:#7dffb0}
+#bigtext .l2{color:#c9ffe0}
+#coderegion{color:#7dffb0}
+#codebody .ln.hl{background:rgba(125,255,176,.14);box-shadow:inset 3px 0 0 #7dffb0}
+#progress i{background:linear-gradient(90deg,#2fd87a,#c9ffe0)}
+.bullet.ok .ic{background:#7dffb0;color:#062312}
+#gl{z-index:0}
+#split{position:absolute;inset:0;z-index:3;opacity:0}
+#split img{position:absolute;top:0;width:960px;height:1080px;object-fit:cover;transform:scale(1.16);transform-origin:50% 0}
+#split{overflow:hidden}
+#footA,#footB{clip-path:inset(0)}
+#footA{left:0}#footB{left:960px}
+#split .lab{position:absolute;top:150px;padding:10px 26px;border-radius:14px;background:rgba(0,0,0,.6);font-size:34px;font-weight:900;border:2px solid rgba(255,255,255,.3)}
+#labA{left:60px}#labB{left:1020px}
+#split::after{content:"";position:absolute;left:957px;top:0;bottom:0;width:6px;background:#fff;box-shadow:0 0 30px rgba(255,255,255,.6)}
+/* 世界坐标标签 */
+#labels{position:absolute;inset:0;z-index:7;pointer-events:none}
+.wl{position:absolute;transform:translate(-50%,-100%);padding:8px 20px;border-radius:12px;background:rgba(6,18,12,.78);border:2px solid #7dffb0;color:#e9fff2;font-size:30px;font-weight:800;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.wl.bad{border-color:#ff6b6b;color:#ffe1e1;background:rgba(40,6,6,.78)}
+.wl.warm{border-color:#ffcf73;color:#fff3d6;background:rgba(36,24,4,.78)}
+.wl small{display:block;font-size:19px;font-weight:500;opacity:.8}
+.wl.mono{font-family:"SF Mono",Menlo,monospace}
+/* 可信度标签 */
+#cred{position:absolute;left:48px;top:118px;z-index:20;opacity:0;padding:8px 18px;border-radius:999px;font-size:21px;font-weight:800;letter-spacing:1px;border:2px solid}
+#cred.h{color:#7ee0a0;border-color:#7ee0a0;background:rgba(10,40,20,.75)}
+#cred.m{color:#ffcf73;border-color:#ffcf73;background:rgba(40,28,6,.75)}
+#cred.l{color:#ff9d8f;border-color:#ff9d8f;background:rgba(40,10,6,.75)}
+#cred.t{color:#c9c9ff;border-color:#b9b9ff;background:rgba(18,18,44,.78);border-style:dashed}
+/* 卡片 */
+.layers3{display:flex;flex-direction:column;gap:14px;width:900px}
+.layers3 div{padding:24px 30px;border-radius:18px;font-size:36px;font-weight:800;display:flex;justify-content:space-between;align-items:center;border:2px solid rgba(255,255,255,.18)}
+.layers3 small{font-size:22px;font-weight:500;opacity:.8}
+.layers3 .l3{background:rgba(125,255,176,.18);border-color:#7dffb0}
+.layers3 .l2{background:rgba(255,207,115,.14)}
+.layers3 .l1{background:rgba(255,255,255,.07)}
+.eqn{font:900 64px "PingFang SC";text-align:center;letter-spacing:2px}
+.eqn b{color:#7dffb0}
+.eqn em{font-style:normal;color:#ffcf73}
+.versus{display:grid;grid-template-columns:1fr 1fr;gap:26px;width:1300px}
+.versus>div{padding:30px 34px;border-radius:20px;background:rgba(10,18,16,.82);border:2px solid rgba(255,255,255,.16)}
+.versus h4{font-size:40px;margin-bottom:14px}
+.versus p{font-size:26px;line-height:1.55;color:#cfe0d6}
+.versus .on{border-color:#7dffb0;box-shadow:0 0 40px rgba(125,255,176,.25)}
+.dia{display:flex;align-items:center;gap:22px;justify-content:center;margin:18px 0 8px}
+.dia .rb{width:150px;height:96px;border-radius:14px;display:grid;place-items:center;font-size:24px;font-weight:800;background:#c49a63;color:#2a1a08}
+.dia .jt{width:46px;height:46px;border-radius:50%;background:#7dffb0;box-shadow:0 0 22px #7dffb0}
+.dia .one{width:330px;height:96px;border-radius:14px;display:grid;place-items:center;font-size:24px;font-weight:800;background:linear-gradient(90deg,#c49a63 49.5%,#7dffb0 49.5% 50.5%,#c49a63 50.5%);color:#2a1a08;outline:4px solid #7dffb0;outline-offset:8px}
+.steps6{display:flex;gap:16px;justify-content:center}
+.steps6 div{padding:16px 22px;border-radius:16px;background:rgba(10,24,16,.8);border:2px solid rgba(125,255,176,.45);font-size:30px;font-weight:800;text-align:center;min-width:150px}
+.steps6 b{display:block;font:800 18px "SF Mono",Menlo,monospace;color:#7dffb0;letter-spacing:2px;margin-bottom:4px}
+.free{display:flex;gap:30px;align-items:stretch}
+.free .site{width:880px;border-radius:18px;overflow:hidden;border:2px solid rgba(255,255,255,.25);box-shadow:0 30px 80px rgba(0,0,0,.5);background:#0c1210}
+.free .site .bar{padding:12px 18px;font:500 20px "SF Mono",Menlo,monospace;background:#1a2420;color:#c9ffe0}
+.free .site img{display:block;width:100%}
+.free .repo{width:620px;padding:34px;border-radius:18px;background:rgba(10,18,16,.88);border:2px solid #7dffb0;display:flex;flex-direction:column;gap:20px}
+.free .repo h4{font-size:36px}
+.free .repo .row{display:flex;gap:14px;align-items:center;font-size:28px;font-weight:800}
+.free .repo .row i{font-style:normal;width:64px;height:64px;border-radius:16px;display:grid;place-items:center;background:rgba(0,174,236,.25);border:2px solid #23ade5;font-size:24px}
+.free .repo .arrow{color:#7dffb0;font-size:34px;text-align:center}
+.free .repo .dm{padding:16px;border-radius:14px;background:#fb7299;color:#fff;font-size:30px;font-weight:900;text-align:center}
+.counter{font:900 120px "SF Mono",Menlo,monospace;text-align:center}
+.counter small{display:block;font:700 26px "PingFang SC";color:#c9ffe0;margin-top:6px}
+.counter.bad{color:#ff6b6b}
+.quote{font-size:58px;font-weight:900;text-align:center;line-height:1.35}
+.quote small{display:block;font-size:24px;font-weight:500;color:#c9ffe0;margin-top:14px}
+.titlecard{position:absolute;left:0;right:0;top:140px;text-align:center}
+.titlecard .k{font:700 26px "SF Mono",Menlo,monospace;letter-spacing:8px;color:#7dffb0;text-shadow:0 2px 10px #000}
+.titlecard .t{font-size:120px;font-weight:900;letter-spacing:4px;text-shadow:0 8px 40px rgba(0,0,0,.8),0 0 2px #000;margin-top:6px}
+.titlecard .t em{font-style:normal;color:#7dffb0}
+#dim{z-index:4}#vignetteL{z-index:5}#foot{z-index:2}
+#pair{position:absolute;inset:0;z-index:1;opacity:0}
+#pair.on{opacity:1}
+#subbg{position:absolute;left:0;right:0;bottom:0;height:260px;z-index:14;background:linear-gradient(0deg,rgba(0,0,0,.72),rgba(0,0,0,0));opacity:0;pointer-events:none}
