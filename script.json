@@ -40,13 +40,9 @@
    "title": "全都得是物理",
    "lines": [
     {
-     "zh": "先看任天堂自己怎么说。GDC 2024 上，王国之泪的物理负责人讲了一条铁律：",
-     "en": "First, what Nintendo says. At GDC 2024, the game's physics lead laid down one iron rule:",
-     "say": "先看任天堂自己怎么说。G D C 二零二四 上，王国之泪的物理负责人讲了一条铁律："
-    },
-    {
-     "zh": "世界里所有东西，都必须是刚体加约束。没有例外。",
-     "en": "Everything in the world must be rigid bodies plus constraints. No exceptions."
+     "zh": "任天堂在 GDC 上立过一条铁律：世界里所有东西，都得是刚体加约束，没有例外。",
+     "en": "At GDC, Nintendo laid down an iron rule: everything in the world must be rigid bodies plus constraints. No exceptions.",
+     "say": "任天堂在 G D C 上立过一条铁律：世界里所有东西，都得是刚体加约束，没有例外。"
     },
     {
      "zh": "以前很多机关是按动画硬推的。在物理引擎眼里，它们重得没有上限。",
@@ -57,8 +53,8 @@
      "en": "So if you slide a block of ice under a gate, the gate shoves it into the floor and keeps twitching."
     },
     {
-     "zh": "改成真物理以后，冰把闸门顶住了，还顺便多出来一种解法。",
-     "en": "With real physics, the ice holds the gate up, and that even opened up a new solution."
+     "zh": "改成真物理以后，冰把闸门顶住了，还顺便多出来一种过关解法。",
+     "en": "With real physics, the ice holds the gate up, and that even opened up a new way to clear the level."
     },
     {
      "zh": "好，规矩懂了。开工。",

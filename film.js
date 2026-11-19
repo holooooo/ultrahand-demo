@@ -34,8 +34,8 @@ const segAt = t => segs.find(s => t >= s.a && t < s.b) || segs[segs.length - 1];
 
 // ---------------------------------------------------------------- 可信度标签（按台词）
 const CRED = {
-  'gdc:0': ['m', '来源：GDC 2024 讲座报道'], 'gdc:1': ['h', '官方 · GDC 2024'], 'gdc:2': ['h', '官方 · GDC 2024'],
-  'gdc:3': ['h', '官方案例 · 画面是我的复刻'], 'gdc:4': ['h', '官方案例 · 画面是我的复刻'],
+  'gdc:0': ['h', '官方 · GDC 2024'], 'gdc:1': ['h', '官方 · GDC 2024'],
+  'gdc:2': ['h', '官方案例 · 画面是我的复刻'], 'gdc:3': ['h', '官方案例 · 画面是我的复刻'],
   'rotate:0': ['t', '45° 是我定的'],
   'glue:3': ['t', '我的推测'],
   'carry:3': ['l', '玩家实测'], 'carry:4': ['t', '我的推测'],
@@ -57,7 +57,7 @@ function cardsFor(id, t) {
       <div class="repo"><div class="row"><i>👍</i><i>⭐</i><i>➕</i></div><div class="arrow">↓</div><div class="dm">私信发你地址</div></div></div>`, win(t, S('repo') + 0.1, END('repo') + 0.2, 0.4));
   }
   if (id === 'gdc') {
-    raw(`<div class="tiny" style="left:760px;top:300px"><div class="eqn">重量 = <em>∞</em></div></div>`, win(t, A('gdc', 2) + 0.4, E('gdc', 2) + 0.2, 0.3));
+    raw(`<div class="tiny" style="left:760px;top:300px"><div class="eqn">重量 = <em>∞</em></div></div>`, win(t, A('gdc', 1) + 0.4, E('gdc', 1) + 0.2, 0.3));
   }
   if (id === 'glue') {
     raw(`<div class="tiny" style="left:120px;top:600px"><div class="dia"><div class="rb">A</div><div class="jt"></div><div class="rb">B</div></div><p>关节</p></div>
@@ -77,7 +77,7 @@ function cardsFor(id, t) {
 }
 function bigFor(id, t) {
   const B = (l1, o, top) => ({ html: `<div class="l1">${l1}</div>`, o, top });
-    if (id === 'gdc' && t >= A('gdc', 1) && t < E('gdc', 1) + 0.2) return B('刚体 + <span class="acc">约束</span>', win(t, A('gdc', 1), E('gdc', 1) + 0.2, 0.3), 380);
+    if (id === 'gdc' && t >= A('gdc', 0) + 1.6 && t < E('gdc', 0) + 0.2) return B('刚体 + <span class="acc">约束</span>', win(t, A('gdc', 0) + 1.6, E('gdc', 0) + 0.2, 0.3), 380);
   if (id === 'power' && t >= A('power', 2) + 2.7 && t < E('power', 2) + 0.2) return B('没有<span class="acc">车辆程序</span>', win(t, A('power', 2) + 2.7, E('power', 2) + 0.2, 0.3), 200);
   if (id === 'launch' && t >= A('launch', 4)) return B('任务<span class="acc">完成</span>', win(t, A('launch', 4), END('launch') + 0.1, 0.4), 330);
   return { html: '', o: 0 };

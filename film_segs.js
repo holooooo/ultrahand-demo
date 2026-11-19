@@ -26,11 +26,11 @@ export function buildSegs(TL, MAN) {
   // repo
   D('hero', S('repo'), END('repo'), 16);
   // gdc
-  F('gdc_everything_physics', S('gdc'), A('gdc', 2) - 0.05, 1.0, GZ);
-  F('gdc_gate_constraint', A('gdc', 2) - 0.05, A('gdc', 3) - 0.05, 0.0, GZ);
-  D('gate_kin', A('gdc', 3) - 0.05, A('gdc', 4) - 0.05, 2.6, 8.6);
-  D('gate_phys', A('gdc', 4) - 0.05, A('gdc', 5) - 0.05, 3.2, 9);
-  D('grab_vel', A('gdc', 5) - 0.05, END('gdc'), 0.0, 2.0);
+  F('gdc_everything_physics', S('gdc'), A('gdc', 1) - 0.05, 1.0, GZ);
+  F('gdc_gate_constraint', A('gdc', 1) - 0.05, A('gdc', 2) - 0.05, 0.0, GZ);
+  D('gate_kin', A('gdc', 2) - 0.05, A('gdc', 3) - 0.05, 2.6, 8.6);
+  D('gate_phys', A('gdc', 3) - 0.05, A('gdc', 4) - 0.05, 3.2, 9);
+  D('grab_vel', A('gdc', 4) - 0.05, END('gdc'), 0.0, 2.0);
   // grab
   D('grab_ray', S('grab'), A('grab', 1) - 0.05, 0.6, 6.5);
   D('grab_tele', A('grab', 1) - 0.05, A('grab', 2) - 0.05, 0.0, 7.4);

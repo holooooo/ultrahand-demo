@@ -50,7 +50,7 @@ for (const seg of segs) {
 for (const s of TL.scenes.slice(1)) cue(s.start + 0.05, 'ui_tick', { gain: 0.5 });
 const L = (id, i) => TL.scenes.find(s => s.id === id).lines[i];
 cue(L('hook', 2).start + 0.15, 'whoosh', { gain: 0.6 });
-cue(L('gdc', 1).start, 'slam', { gain: 0.45 });
+cue(L('gdc', 0).start + 1.8, 'slam', { gain: 0.45 });
 cue(L('launch', 4).start, 'chime', { gain: 0.6 });
 cue(L('outro', 1).start + 0.7, 'chime', { gain: 0.5 });
 cues.sort((a, b) => TL.scenes.findIndex(s => s.id === a.scene) - TL.scenes.findIndex(s => s.id === b.scene) || a.offset - b.offset);
