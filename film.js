@@ -40,7 +40,6 @@ const CRED = {
   'glue:3': ['t', '我的推测'],
   'carry:3': ['l', '玩家实测'], 'carry:4': ['t', '我的推测'],
   'power:2': ['h', '官方 · GDC 2024'],
-  'besiege:0': ['l', '社区 Wiki'],
 };
 // 不放代码卡片和大段文字：画面只留短标签
 const codeFor = () => null;
@@ -50,16 +49,12 @@ function cardsFor(id, t) {
   const c = [];
   const raw = (html, o = 1) => o > 0.01 && c.push(`<div style="position:absolute;inset:0;opacity:${o.toFixed(3)}">${html}</div>`);
   if (id === 'hook') {
-    raw(`<div class="titlecard"><div class="k">机制拆解 · 第 5 期</div><div class="t">如何在塞尔达<br>完成<em>载人航天</em></div></div>`, win(t, A('hook', 2) + 0.3, A('hook', 3) - 0.1, 0.35));
-  }
-  if (id === 'hook' || id === 'outro') {
-    const li = id === 'hook' ? 4 : 1;
-    raw(`<div class="opus"><b>代码</b>Claude Opus<b>提需求 · 按发射</b>粑粑柑</div>`, win(t, A(id, li), E(id, li) + 0.3, 0.3));
+    raw(`<div class="titlecard"><div class="k">机制拆解 · 第 5 期</div><div class="t">如何在塞尔达<br>完成<em>载人航天</em></div></div>`, win(t, A('hook', 2) + 0.3, END('hook') - 0.1, 0.35));
   }
   if (id === 'repo') {
     raw(`<div class="free" style="position:absolute;left:150px;top:200px">
       <div class="site"><div class="bar">mechanics-breakdown.pages.dev/05-ultrahand/</div><img src="media/site.jpg"></div>
-      <div class="repo"><div class="row"><i>👍</i><i>🪙</i><i>⭐</i></div><div class="arrow">↓ 评论</div><div class="dm">私信发源码</div></div></div>`, win(t, S('repo') + 0.1, END('repo') + 0.2, 0.4));
+      <div class="repo"><div class="row"><i>👍</i><i>⭐</i><i>➕</i></div><div class="arrow">↓</div><div class="dm">私信发你地址</div></div></div>`, win(t, S('repo') + 0.1, END('repo') + 0.2, 0.4));
   }
   if (id === 'gdc') {
     raw(`<div class="tiny" style="left:760px;top:300px"><div class="eqn">重量 = <em>∞</em></div></div>`, win(t, A('gdc', 2) + 0.4, E('gdc', 2) + 0.2, 0.3));
@@ -75,15 +70,14 @@ function cardsFor(id, t) {
   if (id === 'outro') {
     raw(`<div class="free" style="position:absolute;left:150px;top:220px"><div class="site"><div class="bar">mechanics-breakdown.pages.dev/05-ultrahand/</div><img src="media/site.jpg"></div></div>`, win(t, A('outro', 0), E('outro', 0) + 0.25, 0.4));
     raw(`<div class="endcard"><img class="av" src="brand/avatar.png"><div class="id">粑粑柑（梭哈ai版）</div>
-      <div class="btns">${['点赞', '投币', '收藏'].map((x, i) => `<div class="btn ${t > A('outro', 1) + 0.6 + i * 0.35 ? 'on' : ''}"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="${i === 1 ? 9 : 8}"/></svg>${x}</div>`).join('')}</div>
-      <div class="follow">+ 关注</div></div>`, ramp(t, A('outro', 1) + 2.0, 0.5));
+      <div class="btns">${['点赞', '收藏', '关注'].map((x, i) => `<div class="btn ${t > A('outro', 1) + 0.6 + i * 0.35 ? 'on' : ''}"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="${i === 1 ? 9 : 8}"/></svg>${x}</div>`).join('')}</div>
+      </div>`, ramp(t, A('outro', 1) + 0.6, 0.5));
   }
   return c.join('');
 }
 function bigFor(id, t) {
   const B = (l1, o, top) => ({ html: `<div class="l1">${l1}</div>`, o, top });
-  if (id === 'hook' && t >= A('hook', 3) && t < E('hook', 3) + 0.2) return B('第一次：<span class="acc">炸了</span>', win(t, A('hook', 3), E('hook', 3) + 0.2, 0.2), 200);
-  if (id === 'gdc' && t >= A('gdc', 1) && t < E('gdc', 1) + 0.2) return B('刚体 + <span class="acc">约束</span>', win(t, A('gdc', 1), E('gdc', 1) + 0.2, 0.3), 380);
+    if (id === 'gdc' && t >= A('gdc', 1) && t < E('gdc', 1) + 0.2) return B('刚体 + <span class="acc">约束</span>', win(t, A('gdc', 1), E('gdc', 1) + 0.2, 0.3), 380);
   if (id === 'power' && t >= A('power', 2) + 2.7 && t < E('power', 2) + 0.2) return B('没有<span class="acc">车辆程序</span>', win(t, A('power', 2) + 2.7, E('power', 2) + 0.2, 0.3), 200);
   if (id === 'launch' && t >= A('launch', 4)) return B('任务<span class="acc">完成</span>', win(t, A('launch', 4), END('launch') + 0.1, 0.4), 330);
   return { html: '', o: 0 };
@@ -174,8 +168,8 @@ window.renderFrame = async function (t) {
     $('footlabel').textContent = `左：${MAN[seg.sa].credit}　右：${MAN[seg.sb].credit}`;
   }
   // 大字 / 卡片出现时压暗背景
-  const cardDim = { repo: 0.72, outro: 0.45 + 0.4 * ramp(t, A('outro', 1) + 2.0, 0.5),
-    hook: (t >= A('hook', 2) + 0.3 && t < A('hook', 3) - 0.1) ? 0.35 : 0 };
+  const cardDim = { repo: 0.72, outro: 0.45 + 0.4 * ramp(t, A('outro', 1) + 0.6, 0.5),
+    hook: (t >= A('hook', 2) + 0.3 && t < END('hook') - 0.1) ? 0.35 : 0 };
   dim = cardDim[id] || 0;
   if (bigFor(id, t).o > 0) dim = Math.max(dim, segAt(t).kind === 'foot' ? 0.82 : 0.5);
 

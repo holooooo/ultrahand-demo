@@ -18,13 +18,11 @@ export function buildSegs(TL, MAN) {
   const E = (id, i) => SC[id].lines[i].end;
   const M = (id, i) => (A(id, i) + E(id, i)) / 2;
   // hook
-  F('totk_builds_floatcannon', 0, 3.2, 8.0, [1.08, 1.0, 50, 45]);
+  F('totk_builds_floatcannon', 0, 3.2, 8.0, [1.08, 1.0, 50, 50]);
   F('totk_builds_walker', 3.2, A('hook', 1) - 0.05, 5.2, [1.0, 1.08, 50, 50]);
   F('totk_trailer_pv2', A('hook', 1) - 0.05, A('hook', 2) - 0.05, 2.6, [1.0, 1.08, 50, 50]);
   D('hero', A('hook', 2) - 0.05, M('hook', 2), 0.3, 5.6);
-  D('launch_ok', M('hook', 2), A('hook', 3) - 0.05, 3.0, 9.0);
-  D('launch_fail', A('hook', 3) - 0.05, A('hook', 4) - 0.05, 1.3, 4.5);
-  D('hero', A('hook', 4) - 0.05, END('hook'), 9.6, 16);
+  D('launch_ok', M('hook', 2), END('hook'), 3.0, 9.0);
   // repo
   D('hero', S('repo'), END('repo'), 16);
   // gdc
@@ -56,10 +54,6 @@ export function buildSegs(TL, MAN) {
   D('wheel', A('power', 1) - 0.05, A('power', 2) - 0.05, 0.6);
   F('gdc_vehicle', A('power', 2) - 0.05, A('power', 2) + 2.6, 0.0, GZ);
   D('hero', A('power', 2) + 2.6, END('power'), 10.2);
-  // besiege
-  F('besiege_build', S('besiege'), M('besiege', 0), 0.0, [1.0, 1.05, 50, 50]);
-  F('besiege_crash', M('besiege', 0), A('besiege', 1) - 0.05, 1.2, [1.22, 1.24, 50, 0]);
-  D('bridge_besiege', A('besiege', 1) - 0.05, END('besiege'), 0.6);
   // launch：点火正好落在“点火”“一”这两个字上
   const ign = (shotIgn, lineEnd, lead) => shotIgn - (lineEnd - lead);
   D('launch_fail', A('launch', 0) - 0.05, A('launch', 1) - 0.05, ign(1.6, E('launch', 0) - A('launch', 0), 0.25));

@@ -20,15 +20,6 @@
     {
      "zh": "任天堂没给代码，我只能自己写一个。顺便定个小目标：在网页里，完成一次载人航天。",
      "en": "Nintendo didn't share the code, so I wrote my own. Small goal while I'm at it: a crewed spaceflight, in a web page."
-    },
-    {
-     "zh": "剧透一下：第一次发射，炸了。",
-     "en": "Spoiler: the first launch blew up."
-    },
-    {
-     "zh": "代码是我让 Claude Opus 写的，我负责提需求，和按发射按钮。",
-     "en": "Claude Opus wrote the code. I wrote the requests, and pressed the launch button.",
-     "say": "代码是我让 克劳德欧帕斯 写的，我负责提需求，和按发射按钮。"
     }
    ]
   },
@@ -38,8 +29,8 @@
    "title": "能玩 · 有源码",
    "lines": [
     {
-     "zh": "网页版直接能玩，链接在简介。源码单独放了个仓库，三连加评论，我私信发你。",
-     "en": "The web version is playable now, link in the description. Source is in its own repo: like, coin, favorite, comment, and I'll DM it to you."
+     "zh": "网页版直接能玩，链接在简介。点赞、收藏、关注之后，我把地址私信发你。",
+     "en": "The web version is playable right now; link in the description. Like, favorite and follow, and I'll DM you the address."
     }
    ]
   },
@@ -190,28 +181,13 @@
    ]
   },
   {
-   "id": "besiege",
-   "kicker": "07 · 围攻",
-   "title": "会散架",
-   "lines": [
-    {
-     "zh": "顺便提一嘴围攻。它是先搭好再开跑，关节受力太大就断，散架本身就是玩法。",
-     "en": "Quick word on Besiege. You build first and run later; overload a joint and it snaps. Falling apart is the gameplay."
-    },
-    {
-     "zh": "我也加了个围攻模式。然后，终于到了今天的主线任务。",
-     "en": "I added a Besiege mode too. Which brings us, finally, to today's main mission."
-    }
-   ]
-  },
-  {
    "id": "launch",
-   "kicker": "08 · 载人航天",
+   "kicker": "07 · 载人航天",
    "title": "三，二，一",
    "lines": [
     {
-     "zh": "载人航天，第一次尝试。一块木板，四根火箭，一位乘客。围攻模式，点火。",
-     "en": "Crewed spaceflight, attempt one. One plank, four rockets, one passenger. Besiege mode. Ignition."
+     "zh": "载人航天，第一次尝试。一块木板，四根火箭，一位乘客。点火。",
+     "en": "Crewed spaceflight, attempt one. One plank, four rockets, one passenger. Ignition."
     },
     {
      "zh": "很好，关节全断了。乘客没事，他自己说的。",
@@ -238,13 +214,12 @@
    "title": "去发射吧",
    "lines": [
     {
-     "zh": "网页版在简介，你也可以去把自己送上天。源码，三连加评论，私信领。",
-     "en": "The web version is in the description; go launch yourself. For the source: like, coin, favorite, comment, and I'll DM you."
+     "zh": "网页版在简介，你也可以去把自己送上天。点赞、收藏、关注，我私信把地址发你。",
+     "en": "The web version is in the description; go launch yourself. Like, favorite and follow, and I'll DM you the address."
     },
     {
-     "zh": "代码是 Opus 写的，锅是我背的。我是粑粑柑，下期见。",
-     "en": "Opus wrote the code; I take the blame. I'm Babagan. See you next time.",
-     "say": "代码是 欧帕斯 写的，锅是我背的。我是粑粑柑，下期见。"
+     "zh": "我是粑粑柑，下期见。",
+     "en": "I'm Babagan. See you next time."
     }
    ]
   }

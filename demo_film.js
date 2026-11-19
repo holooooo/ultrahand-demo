@@ -19,7 +19,7 @@ const SEQ = [
   [0, 4.6, 'hero', 0.3, 4.9, '<div><kbd>左键</kbd>抓起木板</div><div><kbd>Q</kbd>转 45°</div>'],
   [4.6, 9.4, 'hero', 4.9, 9.7, '<div>靠近 → 绿线预览</div><div><kbd>左键</kbd>松手 = 粘上</div>'],
   [9.4, 15, 'hero', 9.7, 15.3, '<div><kbd>V</kbd>开动力</div><div>没有一行“车辆程序”</div>'],
-  [15, 22, 'launch_fail', 0.6, 7.6, '<div>载人火箭 · 围攻模式</div><div>关节全断 💥</div>'],
+  [15, 22, 'launch_fail', 0.6, 7.6, '<div>载人火箭 · 第一次</div><div>关节全断 💥</div>'],
   [22, 36, 'launch_ok', 1.6, 15.6, '<div>合并模式 · 再来一次</div><div>🚀 起飞</div>'],
   [36, 42, ['bridge_joint', 'bridge_merge'], 0.6, 6.6, '<div>同一座桥：关节 vs 焊死</div>'],
   [42, 52, 'carry_all', 0.4, 8.4, '<div>网页里亲手试试 ↗</div>'],
@@ -54,7 +54,7 @@ window.renderFrame = async t => {
   $('capbox').innerHTML = `<div class="cap" style="opacity:${win(t, a, b).toFixed(3)}">${cap}</div>`;
   const endO = ease((t - 47) / 0.6);
   $('dim').style.opacity = (0.55 * endO).toFixed(3);
-  $('cards').innerHTML = endO > 0.01 ? `<div class="titlecard" style="top:300px;opacity:${endO.toFixed(3)}"><div class="k">机制拆解 · 第 5 期 · 代码：Claude Opus</div><div class="t">如何在塞尔达<br>完成<em>载人航天</em></div><div class="k" style="margin-top:22px">网页可玩 · mechanics-breakdown.pages.dev/05-ultrahand/</div></div>` : '';
+  $('cards').innerHTML = endO > 0.01 ? `<div class="titlecard" style="top:300px;opacity:${endO.toFixed(3)}"><div class="k">机制拆解 · 第 5 期</div><div class="t">如何在塞尔达<br>完成<em>载人航天</em></div><div class="k" style="margin-top:22px">网页可玩 · mechanics-breakdown.pages.dev/05-ultrahand/</div></div>` : '';
 };
 await document.fonts.ready;
 window.READY = true;
